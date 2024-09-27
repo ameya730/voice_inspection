@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:voice_poc/pages/03_home/home.dart';
+import 'package:page_transition/page_transition.dart';
+import 'package:voice_poc/pages/00_landing/landing.dart';
+import 'package:voice_poc/services/routes/f_routes.dart';
+import 'package:voice_poc/services/themes/constants/base_theme.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
@@ -13,10 +17,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        useMaterial3: true,
+      theme: baseTheme,
+      home: const PageLanding(),
+      onGenerateRoute: (settings) => PageTransition(
+        child: returnRoute(settings.name ?? ''),
+        settings: RouteSettings(arguments: settings.arguments),
+        type: PageTransitionType.fade,
       ),
-      home: const PageHome(),
     );
   }
 }
