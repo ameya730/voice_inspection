@@ -3,8 +3,9 @@ class MCheckSheet {
   int? gROUPID;
   int? sEQUENCE;
   String? sKU;
+  String? status;
 
-  MCheckSheet({this.gROUP, this.gROUPID, this.sEQUENCE, this.sKU});
+  MCheckSheet({this.gROUP, this.gROUPID, this.sEQUENCE, this.sKU, this.status});
 
   MCheckSheet.fromJson(Map<String, dynamic> json) {
     gROUP = json['GROUP'];

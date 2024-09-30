@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:voice_poc/features/checksheets/c_checksheet.dart';
+import 'package:voice_poc/features/checksheets/services/s_checksheet.dart';
 import 'package:voice_poc/features/checksheets/models/m_check_sheet.dart';
 
 class HomeServices extends CheckSheetService with ChangeNotifier {
@@ -10,12 +10,14 @@ class HomeServices extends CheckSheetService with ChangeNotifier {
   List<MCheckSheet> _checkList = [];
   List<MCheckSheet> get checkList => _checkList;
 
+  // Variable to start listening to the user voice
+  bool _isStart = false;
+  bool get isStart => _isStart;
+  set setIsStart(bool val) => _isStart = val;
+
   // Current active to check
   MCheckSheet? toCheck;
-  set setToCheck(MCheckSheet? check) {
-    toCheck = check;
-    narrateText();
-  }
+  set setToCheck(MCheckSheet? check) => setupToCheck(check);
 
   // Variable to text to speech
   FlutterTts? flutterTts;
@@ -32,7 +34,37 @@ class HomeServices extends CheckSheetService with ChangeNotifier {
     return;
   }
 
-  narrateText() async => await flutterTts?.speak(
-        toCheck?.gROUP ?? 'Unable to understand',
-      );
+  setupToCheck(MCheckSheet? check) async {
+    toCheck = check;
+    await narrateText();
+    notifyListeners();
+  }
+
+  narrateText() async {
+    print('The error is ${toCheck?.gROUP ?? 'Unable to understand'}');
+
+    await flutterTts?.speak(
+      toCheck?.gROUP ?? 'You have completed the inspection',
+    );
+    return;
+  }
+
+  // This function is used to update the status of the current checklist
+  updateStatus(String status) {
+    // Update the status
+    toCheck?.status = status;
+    // Update the status for the object in the list
+    int index = checkList.indexWhere((e) => e == toCheck!);
+    checkList[index].status = status;
+    // Check if it is the last item in the list or not
+    // If not then move to the next list
+    bool isLast = checkList.length - 1 == index;
+    if (isLast == false) {
+      setToCheck = checkList[index + 1];
+    } else {
+      setToCheck = null;
+    }
+
+    notifyListeners();
+  }
 }
