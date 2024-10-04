@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:voice_poc/features/bluetooth/f_bluetooth.dart';
 import 'package:voice_poc/features/checksheets/widgets/w_display_card.dart';
 import 'package:voice_poc/features/speech_to_text/widgets/listen.dart';
 import 'package:voice_poc/pages/02_home/s_home.dart';
-import 'package:voice_poc/widgets/buttons/button_with_loader.dart';
 
 class PageHome extends StatefulWidget {
   const PageHome({super.key});
@@ -20,7 +20,10 @@ class _PageHomeState extends State<PageHome> {
     super.initState();
   }
 
-  setup() async => service.getCheckList('00JU0AZZ');
+  setup() async {
+    await AudioService().switchToBluetoothMic();
+    service.getCheckList('00JU0AZZ');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,10 +33,10 @@ class _PageHomeState extends State<PageHome> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            WDButtonWithLoad(
-              label: 'Scan VIN',
-              callback: setup,
-            ),
+            // WDButtonWithLoad(
+            //   label: 'Scan VIN',
+            //   callback: setup,
+            // ),
             WDListen(service: service),
           ],
         ),

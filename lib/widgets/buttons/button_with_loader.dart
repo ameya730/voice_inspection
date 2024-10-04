@@ -34,7 +34,7 @@ class _WDButtonWithLoadState extends State<WDButtonWithLoad> {
   Widget build(BuildContext context) {
     return ElevatedButton(
       style: ButtonStyle(
-        backgroundColor: MaterialStatePropertyAll(
+        backgroundColor: WidgetStatePropertyAll(
           isLoading ? AppColors.disabled.color : AppColors.primary.color,
         ),
       ),

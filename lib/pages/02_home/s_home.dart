@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:voice_poc/features/checksheets/services/s_checksheet.dart';
 import 'package:voice_poc/features/checksheets/models/m_check_sheet.dart';
 
@@ -24,7 +25,6 @@ class HomeServices extends CheckSheetService with ChangeNotifier {
 
   Future getCheckList(String sku) async {
     _checkList = await getCheckSheetList(sku);
-
     flutterTts = FlutterTts();
     await flutterTts?.setLanguage("en-US");
     await flutterTts?.setSpeechRate(0.3);
@@ -50,7 +50,7 @@ class HomeServices extends CheckSheetService with ChangeNotifier {
   }
 
   // This function is used to update the status of the current checklist
-  updateStatus(String status) {
+  Future updateStatus(String status) async {
     // Update the status
     toCheck?.status = status;
     // Update the status for the object in the list
@@ -66,5 +66,6 @@ class HomeServices extends CheckSheetService with ChangeNotifier {
     }
 
     notifyListeners();
+    return;
   }
 }

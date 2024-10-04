@@ -1,5 +1,5 @@
 enum Keywords {
-  passed('Cleared'),
+  passed('confirm'),
   failed('Failed'),
   showEarlier('Show Earlier');
 
