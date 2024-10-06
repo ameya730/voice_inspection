@@ -41,6 +41,7 @@ dependencies:
   auto_size_text: ^3.0.0
   permission_handler: ^10.4.5
   vosk_flutter: ^0.3.48
+  mobile_scanner: ^5.2.3
 
 dev_dependencies:
   flutter_test:

@@ -1,51 +1,36 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter_tts/flutter_tts.dart';
-import 'package:voice_poc/features/checksheets/services/s_checksheet.dart';
+import 'package:flutter/material.dart';
 import 'package:voice_poc/features/checksheets/models/m_check_sheet.dart';
+import 'package:voice_poc/features/checksheets/services/s_checksheet.dart';
+import 'package:voice_poc/features/text_to_speech/services/s_text_to_speech.dart';
 
-class HomeServices extends CheckSheetService with ChangeNotifier {
-  // Basic loader
-
+class PreDeliveryServices extends CheckSheetService
+    with TTSServices, ChangeNotifier {
   // Check list that displays the list of activities that need to be checked by the user
   List<MCheckSheet> _checkList = [];
   List<MCheckSheet> get checkList => _checkList;
-
-  // Variable to start listening to the user voice
-  bool _isStart = false;
-  bool get isStart => _isStart;
-  set setIsStart(bool val) => _isStart = val;
 
   // Current active to check
   MCheckSheet? toCheck;
   set setToCheck(MCheckSheet? check) => setupToCheck(check);
 
-  // Variable to text to speech
-  FlutterTts? flutterTts;
-
+  // Function to fetch the checklist
   Future getCheckList(String sku) async {
     _checkList = await getCheckSheetList(sku);
-    flutterTts = FlutterTts();
-    await flutterTts?.setLanguage("en-US");
-    await flutterTts?.setSpeechRate(0.3);
-    await flutterTts?.setPitch(1);
 
     notifyListeners();
     return;
   }
 
+  // Method to initialize the inspection process
+  Future initInspection() async {
+    await super.initTTS();
+  }
+
+  // Narrat the selected option
   setupToCheck(MCheckSheet? check) async {
     toCheck = check;
-    await narrateText();
+    await super.narrateText(toCheck?.gROUP ?? 'End of inspection');
     notifyListeners();
-  }
-
-  narrateText() async {
-    print('The error is ${toCheck?.gROUP ?? 'Unable to understand'}');
-
-    await flutterTts?.speak(
-      toCheck?.gROUP ?? 'You have completed the inspection',
-    );
-    return;
   }
 
   // This function is used to update the status of the current checklist

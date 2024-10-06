@@ -4,6 +4,9 @@ import 'package:voice_poc/features/checksheets/widgets/w_display_card.dart';
 import 'package:voice_poc/features/speech_to_text/widgets/listen.dart';
 import 'package:voice_poc/pages/02_home/s_home.dart';
 
+// This is the main page that a person sees when he logs in
+// The home page should primarily have an option for the person to scan a QR code and get the VIN number
+// Once the person gets the VIN number an API call is made to the server to fetch the checklist
 class PageHome extends StatefulWidget {
   const PageHome({super.key});
 
@@ -33,10 +36,6 @@ class _PageHomeState extends State<PageHome> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // WDButtonWithLoad(
-            //   label: 'Scan VIN',
-            //   callback: setup,
-            // ),
             WDListen(service: service),
           ],
         ),
