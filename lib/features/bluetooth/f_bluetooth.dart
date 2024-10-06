@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/services.dart';
 
 class AudioService {
@@ -5,10 +7,9 @@ class AudioService {
 
   Future<void> switchToBluetoothMic() async {
     try {
-      var result = await platform.invokeMethod('switchToBluetoothMic');
-      print('The result is $result');
+      await platform.invokeMethod('switchToBluetoothMic');
     } on PlatformException catch (e) {
-      print("Failed to switch to Bluetooth mic: '${e.message}'.");
+      log("Failed to switch to Bluetooth mic: '${e.message}'.");
     }
   }
 }

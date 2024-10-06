@@ -42,7 +42,7 @@ class _WDScanQRState extends State<WDScanQR> {
   Widget build(BuildContext context) {
     if (scannedVal != null) {
       return InkWell(
-        onTap: scanAgainFn,
+        onTap: () => scanAgainFn,
         child: AspectRatio(
           aspectRatio: 16 / 9,
           child: Container(

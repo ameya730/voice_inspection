@@ -1,17 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:voice_poc/features/checksheets/constants/c_key_prompts.dart';
 import 'package:voice_poc/features/checksheets/models/m_check_sheet.dart';
 import 'package:voice_poc/features/checksheets/services/s_checksheet.dart';
+import 'package:voice_poc/features/speech_to_text/services/s_speech_to_text.dart';
 import 'package:voice_poc/features/text_to_speech/services/s_text_to_speech.dart';
 
 class PreDeliveryServices extends CheckSheetService
     with TTSServices, ChangeNotifier {
+  final sttServices = SpeechToTextServices();
+
+  // Scan a QR code to get the vehicle identification number
+  String _sku = '';
+  String get sku => _sku;
+  set setSku(String str) {
+    _sku = str;
+    getCheckList(sku);
+  }
+
   // Check list that displays the list of activities that need to be checked by the user
   List<MCheckSheet> _checkList = [];
   List<MCheckSheet> get checkList => _checkList;
 
   // Current active to check
-  MCheckSheet? toCheck;
-  set setToCheck(MCheckSheet? check) => setupToCheck(check);
+  MCheckSheet? _toCheck;
+  MCheckSheet? get toCheck => _toCheck;
+
+  // Boolean to let the user know that the inspection is complete
+  bool? isComplete;
 
   // Function to fetch the checklist
   Future getCheckList(String sku) async {
@@ -23,33 +38,65 @@ class PreDeliveryServices extends CheckSheetService
 
   // Method to initialize the inspection process
   Future initInspection() async {
+    // When the user clicks on start inspection, first initialize text to speech services
     await super.initTTS();
+    // Next initialize speech to text services
+    await sttServices.initSTTServices();
+
+    // Set the to be checked item as the first one from the check list
+    _toCheck = _checkList.first;
+    notifyListeners();
+    // Finally start listening to the result
+
+    sttServices.speechService?.onResult().forEach(
+      (result) {
+        print(result);
+        if (result.contains('verified')) {
+          updateStatus(Keywords.passed.prompt);
+        }
+        if (result.contains('rejected')) {
+          updateStatus(Keywords.failed.prompt);
+        }
+      },
+    );
+    await sttServices.speechService?.start();
   }
 
   // Narrat the selected option
-  setupToCheck(MCheckSheet? check) async {
-    toCheck = check;
-    await super.narrateText(toCheck?.gROUP ?? 'End of inspection');
+  setupToCheck() async {
+    String str = '';
+
+    if (isComplete == true) {
+      str = 'End of inspection';
+    } else {
+      str = _toCheck?.gROUP ?? '-';
+    }
+
+    await super.narrateText(str);
     notifyListeners();
+    return;
   }
 
   // This function is used to update the status of the current checklist
   Future updateStatus(String status) async {
     // Update the status
-    toCheck?.status = status;
+    _toCheck?.status = status;
     // Update the status for the object in the list
-    int index = checkList.indexWhere((e) => e == toCheck!);
+    int index = checkList.indexWhere((e) => e == _toCheck!);
     checkList[index].status = status;
     // Check if it is the last item in the list or not
     // If not then move to the next list
     bool isLast = checkList.length - 1 == index;
     if (isLast == false) {
-      setToCheck = checkList[index + 1];
+      _toCheck = checkList[index + 1];
+      isComplete = false;
     } else {
-      setToCheck = null;
+      _toCheck = null;
+      isComplete = true;
     }
 
-    notifyListeners();
-    return;
+    await setupToCheck();
   }
+
+  disposeServices() async => await sttServices.disposeSST();
 }

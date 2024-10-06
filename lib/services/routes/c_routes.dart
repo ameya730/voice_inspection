@@ -4,7 +4,8 @@ enum Routes {
   logOut('/logout'),
   register('/register'),
   resetPassword('/resetPassword'),
-  home('/home');
+  home('/home'),
+  preDeliveryInspection('/preDeliveryInspection');
 
   final String path;
   const Routes(this.path);

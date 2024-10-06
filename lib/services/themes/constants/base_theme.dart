@@ -21,7 +21,7 @@ ThemeData baseTheme = ThemeData(
   ),
   iconTheme: const IconThemeData(size: 16, color: Colors.black),
   primaryColor: Colors.blue.shade800,
-  scaffoldBackgroundColor: Colors.white,
+  scaffoldBackgroundColor: Colors.blueGrey.shade100,
   canvasColor: Colors.black.withOpacity(0.65),
   drawerTheme: DrawerThemeData(
     elevation: 2,

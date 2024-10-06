@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:voice_poc/features/bluetooth/f_bluetooth.dart';
-import 'package:voice_poc/features/checksheets/widgets/w_display_card.dart';
-import 'package:voice_poc/features/speech_to_text/widgets/listen.dart';
 import 'package:voice_poc/pages/02_home/s_home.dart';
+import 'package:voice_poc/widgets/buttons/button_with_loader.dart';
+import 'package:voice_poc/widgets/labels/w_label.dart';
+import 'package:voice_poc/widgets/pages/home/w_display_inspection_types.dart';
 
 // This is the main page that a person sees when he logs in
 // The home page should primarily have an option for the person to scan a QR code and get the VIN number
@@ -25,29 +26,21 @@ class _PageHomeState extends State<PageHome> {
 
   setup() async {
     await AudioService().switchToBluetoothMic();
-    service.getCheckList('00JU0AZZ');
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Speech Demo')),
-      persistentFooterButtons: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ListView(
           children: [
-            WDListen(service: service),
+            WDLabel(label: 'Select type of inspection : '),
+            const Divider(),
+            InspectionTypeCard(),
+            WDButtonWithLoad(label: 'Test', callback: () => service.test())
           ],
-        ),
-      ],
-      body: ListenableBuilder(
-        listenable: service,
-        builder: (context, child) => ListView(
-          children: service.checkList
-              .map(
-                (e) => WDDisplayCheckListCard(model: e, service: service),
-              )
-              .toList(),
         ),
       ),
     );

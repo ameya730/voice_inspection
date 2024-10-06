@@ -1,14 +1,11 @@
 import 'package:vosk_flutter/vosk_flutter.dart';
 
-mixin SpeechToTextServices {
+class SpeechToTextServices {
   final _vosk = VoskFlutterPlugin.instance();
-  String? _fileRecognitionResult;
-  String? _error;
   Model? _model;
   Recognizer? _recognizer;
   SpeechService? _speechService;
-  bool _recognitionStarted = false;
-  bool isPaused = false;
+  SpeechService? get speechService => _speechService;
 
   Future initSTTServices() async {
     final enSmallModelPath = await ModelLoader().loadFromAssets(
@@ -20,10 +17,15 @@ mixin SpeechToTextServices {
       sampleRate: 16000,
       grammar: ['verified', 'rejected'],
     );
+
     try {
+      print('1');
       _speechService = await _vosk.initSpeechService(_recognizer!);
     } catch (e) {
+      print('2');
       _speechService = _vosk.getSpeechService();
     }
   }
+
+  Future disposeSST() async => await _speechService?.dispose();
 }

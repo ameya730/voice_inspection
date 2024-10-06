@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:voice_poc/features/checksheets/constants/c_key_prompts.dart';
 import 'package:voice_poc/features/checksheets/models/m_check_sheet.dart';
-import 'package:voice_poc/pages/02_home/s_home.dart';
+import 'package:voice_poc/pages/03_pre_delivery/s_pre_delivery.dart';
 import 'package:voice_poc/services/themes/constants/colors.dart';
 import 'package:voice_poc/widgets/labels/w_label.dart';
 
@@ -9,7 +9,7 @@ class WDDisplayCheckListCard extends StatelessWidget {
   const WDDisplayCheckListCard(
       {super.key, required this.model, required this.service});
   final MCheckSheet model;
-  final HomeServices service;
+  final PreDeliveryServices service;
 
   @override
   Widget build(BuildContext context) {
