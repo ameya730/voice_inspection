@@ -43,7 +43,7 @@ class _WDButtonWithLoadState extends State<WDButtonWithLoad> {
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(widget.label),
+          Text(widget.label, style: TextStyle(color: Colors.white)),
           if (isLoading) ...[
             const Padding(
               padding: EdgeInsets.only(left: 8.0),

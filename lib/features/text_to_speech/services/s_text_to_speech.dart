@@ -15,7 +15,6 @@ mixin TTSServices {
   // Method to narrate text
   narrateText(String str) async {
     await flutterTts?.speak(str);
-
     return;
   }
 }

@@ -60,6 +60,7 @@ class PreDeliveryServices extends CheckSheetService
       },
     );
     await sttServices.speechService?.start();
+    await setupToCheck();
   }
 
   // Narrat the selected option

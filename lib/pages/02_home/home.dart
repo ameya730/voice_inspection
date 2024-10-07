@@ -39,7 +39,6 @@ class _PageHomeState extends State<PageHome> {
             WDLabel(label: 'Select type of inspection : '),
             const Divider(),
             InspectionTypeCard(),
-            WDButtonWithLoad(label: 'Test', callback: () => service.test())
           ],
         ),
       ),

@@ -5,6 +5,7 @@ import 'package:voice_poc/pages/03_pre_delivery/s_pre_delivery.dart';
 import 'package:voice_poc/services/routes/c_routes.dart';
 import 'package:voice_poc/widgets/buttons/button_with_loader.dart';
 import 'package:voice_poc/widgets/labels/w_label.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 class PageInspectPreDelivery extends StatefulWidget {
   const PageInspectPreDelivery({super.key});
@@ -19,7 +20,14 @@ class _PageInspectPreDeliveryState extends State<PageInspectPreDelivery> {
   setScanValFn(String? val) => services.setSku = val ?? '-';
 
   @override
+  void initState() {
+    WakelockPlus.enable();
+    super.initState();
+  }
+
+  @override
   void dispose() {
+    WakelockPlus.disable();
     services.disposeServices();
     super.dispose();
   }
@@ -62,13 +70,9 @@ class _PageInspectPreDeliveryState extends State<PageInspectPreDelivery> {
                     const Divider(),
                     if (services.isComplete == true) ...[
                       WDLabel(
-                          label:
-                              'You have completed the inspection of the vehicle.'),
-                      WDButtonWithLoad(
-                        label: 'Start another inspection',
-                        callback: () {},
+                        label:
+                            'You have completed the inspection of the vehicle.',
                       ),
-                      WDLabel(label: '--Or--'),
                       WDButtonWithLoad(
                         label: 'Return to home page',
                         callback: () => Navigator.pushNamedAndRemoveUntil(
@@ -77,6 +81,7 @@ class _PageInspectPreDeliveryState extends State<PageInspectPreDelivery> {
                           (route) => false,
                         ),
                       ),
+                      const Divider(),
                     ],
                     Expanded(
                       child: ListView(
