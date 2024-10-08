@@ -3,17 +3,47 @@ import 'package:voice_poc/services/themes/constants/colors.dart';
 
 ThemeData baseTheme = ThemeData(
   textTheme: const TextTheme(
-    displayLarge: TextStyle(
+    headlineLarge: TextStyle(
       fontSize: 18,
       color: Colors.black87,
       fontWeight: FontWeight.w400,
     ),
-    displayMedium: TextStyle(
+    headlineMedium: TextStyle(
       fontSize: 16,
       color: Colors.black87,
       fontWeight: FontWeight.w400,
     ),
+    headlineSmall: TextStyle(
+      fontSize: 14,
+      color: Colors.black87,
+      fontWeight: FontWeight.w400,
+    ),
+    displayLarge: TextStyle(
+      fontSize: 28,
+      color: Colors.black87,
+      fontWeight: FontWeight.w400,
+    ),
+    displayMedium: TextStyle(
+      fontSize: 24,
+      color: Colors.black87,
+      fontWeight: FontWeight.w400,
+    ),
     displaySmall: TextStyle(
+      fontSize: 20,
+      color: Colors.black87,
+      fontWeight: FontWeight.w400,
+    ),
+    bodyLarge: TextStyle(
+      fontSize: 18,
+      color: Colors.black87,
+      fontWeight: FontWeight.w400,
+    ),
+    bodyMedium: TextStyle(
+      fontSize: 16,
+      color: Colors.black87,
+      fontWeight: FontWeight.w400,
+    ),
+    bodySmall: TextStyle(
       fontSize: 14,
       color: Colors.black87,
       fontWeight: FontWeight.w400,
@@ -21,7 +51,7 @@ ThemeData baseTheme = ThemeData(
   ),
   iconTheme: const IconThemeData(size: 16, color: Colors.black),
   primaryColor: Colors.blue.shade800,
-  scaffoldBackgroundColor: Colors.blueGrey.shade100,
+  scaffoldBackgroundColor: const Color(0xFF87B5F0),
   canvasColor: Colors.black.withOpacity(0.65),
   drawerTheme: DrawerThemeData(
     elevation: 2,
@@ -54,6 +84,7 @@ ThemeData baseTheme = ThemeData(
     labelStyle: TextStyle(
       color: AppColors.black.color,
       fontSize: 12,
+      fontWeight: FontWeight.bold,
     ),
     border: InputBorder.none,
     floatingLabelBehavior: FloatingLabelBehavior.always,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:voice_poc/pages/01_login/s_login.dart';
 import 'package:voice_poc/widgets/buttons/button_with_loader.dart';
+import 'package:voice_poc/widgets/labels/w_label.dart';
 
 class PageLogin extends StatefulWidget {
   const PageLogin({super.key});
@@ -16,6 +17,7 @@ class _PageLoginState extends State<PageLogin> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        persistentFooterButtons: [Text('Version : 1.0.0')],
         body: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Center(
@@ -23,6 +25,16 @@ class _PageLoginState extends State<PageLogin> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: WDLabel(
+                    label: 'Vehicle Inspection by Speech',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
@@ -37,6 +49,7 @@ class _PageLoginState extends State<PageLogin> {
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
                     onChanged: (value) => service.setPassword = value,
+                    obscureText: true,
                     decoration: const InputDecoration(
                       hintText: 'Input Password',
                       labelText: 'Password',

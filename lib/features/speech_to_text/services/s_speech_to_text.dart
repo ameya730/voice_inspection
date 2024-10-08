@@ -1,6 +1,6 @@
 import 'package:vosk_flutter/vosk_flutter.dart';
 
-class SpeechToTextServices {
+mixin SpeechToTextServices {
   final _vosk = VoskFlutterPlugin.instance();
   Model? _model;
   Recognizer? _recognizer;
@@ -27,5 +27,8 @@ class SpeechToTextServices {
     }
   }
 
-  Future disposeSST() async => await _speechService?.dispose();
+  Future disposeSST() async {
+    await _speechService?.dispose();
+    await _recognizer?.dispose();
+  }
 }

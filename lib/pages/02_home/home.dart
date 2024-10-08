@@ -1,7 +1,10 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:voice_poc/features/bluetooth/f_bluetooth.dart';
+import 'package:voice_poc/features/record/widgets/w_record.dart';
 import 'package:voice_poc/pages/02_home/s_home.dart';
-import 'package:voice_poc/widgets/buttons/button_with_loader.dart';
+import 'package:voice_poc/services/auth/auth_service.dart';
+import 'package:voice_poc/services/routes/c_routes.dart';
 import 'package:voice_poc/widgets/labels/w_label.dart';
 import 'package:voice_poc/widgets/pages/home/w_display_inspection_types.dart';
 
@@ -31,7 +34,27 @@ class _PageHomeState extends State<PageHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Speech Demo')),
+      appBar: AppBar(
+        leading: InkWell(
+          onTap: () async {
+            await AuthService().logOut();
+            if (context.mounted) {
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                Routes.login.path,
+                (route) => false,
+              );
+            }
+          },
+          child: Icon(
+            Icons.logout,
+            color: Colors.white,
+          ),
+        ),
+        title: const Text(
+          'Speech Demo',
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListView(
@@ -39,6 +62,7 @@ class _PageHomeState extends State<PageHome> {
             WDLabel(label: 'Select type of inspection : '),
             const Divider(),
             InspectionTypeCard(),
+            WDRecord(),
           ],
         ),
       ),

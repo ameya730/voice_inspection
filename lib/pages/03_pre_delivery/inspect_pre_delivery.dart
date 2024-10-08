@@ -28,7 +28,6 @@ class _PageInspectPreDeliveryState extends State<PageInspectPreDelivery> {
   @override
   void dispose() {
     WakelockPlus.disable();
-    services.disposeServices();
     super.dispose();
   }
 
@@ -41,15 +40,16 @@ class _PageInspectPreDeliveryState extends State<PageInspectPreDelivery> {
       persistentFooterButtons: [
         ListenableBuilder(
           listenable: services,
-          builder: (context, child) => services.isComplete == true
-              ? const SizedBox(
-                  height: 0,
-                  width: 0,
-                )
-              : WDButtonWithLoad(
-                  label: 'Start Inspection',
-                  callback: () => services.initInspection(),
-                ),
+          builder: (context, child) =>
+              services.isComplete == true || services.sku.isEmpty
+                  ? const SizedBox(
+                      height: 0,
+                      width: 0,
+                    )
+                  : WDButtonWithLoad(
+                      label: 'Start Inspection',
+                      callback: () => services.initInspection(),
+                    ),
         ),
       ],
       body: ListenableBuilder(
@@ -74,13 +74,17 @@ class _PageInspectPreDeliveryState extends State<PageInspectPreDelivery> {
                             'You have completed the inspection of the vehicle.',
                       ),
                       WDButtonWithLoad(
-                        label: 'Return to home page',
-                        callback: () => Navigator.pushNamedAndRemoveUntil(
-                          context,
-                          Routes.home.path,
-                          (route) => false,
-                        ),
-                      ),
+                          label: 'Return to home page',
+                          callback: () async {
+                            // await services.disposeServices();
+                            if (context.mounted) {
+                              Navigator.pushNamedAndRemoveUntil(
+                                context,
+                                Routes.home.path,
+                                (route) => false,
+                              );
+                            }
+                          }),
                       const Divider(),
                     ],
                     Expanded(

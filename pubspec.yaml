@@ -43,6 +43,9 @@ dependencies:
   vosk_flutter: ^0.3.48
   mobile_scanner: ^5.2.3
   wakelock_plus: ^1.2.8
+  record: ^5.1.2
+  path_provider: ^2.1.4
+  audioplayers: ^6.1.0
 
 dev_dependencies:
   flutter_test:

@@ -6,9 +6,7 @@ import 'package:voice_poc/features/speech_to_text/services/s_speech_to_text.dart
 import 'package:voice_poc/features/text_to_speech/services/s_text_to_speech.dart';
 
 class PreDeliveryServices extends CheckSheetService
-    with TTSServices, ChangeNotifier {
-  final sttServices = SpeechToTextServices();
-
+    with TTSServices, SpeechToTextServices, ChangeNotifier {
   // Scan a QR code to get the vehicle identification number
   String _sku = '';
   String get sku => _sku;
@@ -41,14 +39,14 @@ class PreDeliveryServices extends CheckSheetService
     // When the user clicks on start inspection, first initialize text to speech services
     await super.initTTS();
     // Next initialize speech to text services
-    await sttServices.initSTTServices();
+    await super.initSTTServices();
 
     // Set the to be checked item as the first one from the check list
     _toCheck = _checkList.first;
     notifyListeners();
     // Finally start listening to the result
 
-    sttServices.speechService?.onResult().forEach(
+    super.speechService?.onResult().forEach(
       (result) {
         print(result);
         if (result.contains('verified')) {
@@ -59,7 +57,7 @@ class PreDeliveryServices extends CheckSheetService
         }
       },
     );
-    await sttServices.speechService?.start();
+    await super.speechService?.start();
     await setupToCheck();
   }
 
@@ -99,5 +97,5 @@ class PreDeliveryServices extends CheckSheetService
     await setupToCheck();
   }
 
-  disposeServices() async => await sttServices.disposeSST();
+  disposeServices() async => await super.disposeSST();
 }
