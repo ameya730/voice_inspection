@@ -26,6 +26,9 @@ class PreDeliveryServices extends CheckSheetService
   // Boolean to let the user know that the inspection is complete
   bool? isComplete;
 
+  bool _isRecording = false;
+  bool get isRecording => _isRecording;
+
   // Function to fetch the checklist
   Future getCheckList(String sku) async {
     _checkList = await getCheckSheetList(sku);
@@ -54,6 +57,14 @@ class PreDeliveryServices extends CheckSheetService
         }
         if (result.contains('rejected')) {
           updateStatus(Keywords.failed.prompt);
+        }
+        if (result.contains('rec on')) {
+          _isRecording = true;
+          notifyListeners();
+        }
+        if (result.contains('rec off')) {
+          _isRecording = false;
+          notifyListeners();
         }
       },
     );

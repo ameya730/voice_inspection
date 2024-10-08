@@ -15,7 +15,7 @@ mixin SpeechToTextServices {
     _recognizer = await _vosk.createRecognizer(
       model: _model!,
       sampleRate: 16000,
-      grammar: ['verified', 'rejected'],
+      grammar: ['verified', 'rejected', 'rec on', 'rec off'],
     );
 
     try {
