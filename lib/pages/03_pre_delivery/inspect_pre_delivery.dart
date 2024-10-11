@@ -1,8 +1,6 @@
 import 'package:barcode_newland_flutter/newland_scanner.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:voice_poc/features/checksheets/widgets/w_display_card.dart';
-import 'package:voice_poc/features/scanner/widgets/w_scan_qr.dart';
 import 'package:voice_poc/pages/03_pre_delivery/s_pre_delivery.dart';
 import 'package:voice_poc/services/routes/c_routes.dart';
 import 'package:voice_poc/widgets/buttons/button_with_loader.dart';
@@ -20,19 +18,15 @@ class _PageInspectPreDeliveryState extends State<PageInspectPreDelivery> {
   final services = PreDeliveryServices();
 
   setScanValFn(String? val) => services.setSku = val ?? '-';
-  MobileScannerController scannerController = MobileScannerController();
 
   @override
   void initState() {
     WakelockPlus.enable();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      scannerController.barcodes.listen((event) {
-        print('the data is $event');
+      Newlandscanner.listenForBarcodes.listen((event) {
+        print('The data is ${event.barcodeData}');
+        services.setSku = event.barcodeData;
       });
-      // Newlandscanner.listenForBarcodes.listen((event) {
-      //   print('The data is ${event.barcodeData}');
-      //   services.setSku = event.barcodeData;
-      // });
     });
     super.initState();
   }
