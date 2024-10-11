@@ -19,10 +19,8 @@ mixin SpeechToTextServices {
     );
 
     try {
-      print('1');
       _speechService = await _vosk.initSpeechService(_recognizer!);
     } catch (e) {
-      print('2');
       _speechService = _vosk.getSpeechService();
     }
   }

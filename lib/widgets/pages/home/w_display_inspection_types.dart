@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:voice_poc/services/routes/c_routes.dart';
 import 'package:voice_poc/widgets/labels/w_label.dart';
 
 class InspectionTypeCard extends StatefulWidget {

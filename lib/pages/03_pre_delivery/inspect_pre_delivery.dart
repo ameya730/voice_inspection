@@ -24,7 +24,6 @@ class _PageInspectPreDeliveryState extends State<PageInspectPreDelivery> {
     WakelockPlus.enable();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Newlandscanner.listenForBarcodes.listen((event) {
-        print('The data is ${event.barcodeData}');
         services.setSku = event.barcodeData;
       });
     });

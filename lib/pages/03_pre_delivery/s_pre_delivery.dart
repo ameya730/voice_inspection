@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:voice_poc/features/checksheets/constants/c_key_prompts.dart';
 import 'package:voice_poc/features/checksheets/models/m_check_sheet.dart';
@@ -94,8 +95,34 @@ class PreDeliveryServices extends CheckSheetService
     // Update the status for the object in the list
     int index = checkList.indexWhere((e) => e == _toCheck!);
     checkList[index].status = status;
+
+    // If the inspection has failed then the user needs to record a short description
+    // that explains why the inspection has failed
+    // At this point, pause the speech recogintion part and allow the user to record
+    // the details
+
+    // Pause speech services
+    await super.speechService?.setPause(paused: true);
+
+    // Prompt the user to wait for the beep
+    await super.narrateText(
+      'Please record the reason for rejection after the beep',
+    );
+
+    // Play the beep
+    await AudioPlayer().play(AssetSource('assets/sounds/beep_sound.mp3'));
+
+    // Once the user finishes recording the description un pause the speech recogniser
+    // and continue with the inspection
+    await super.speechService?.setPause(paused: false);
+
+    moveToNextOrEnd();
+  }
+
+  moveToNextOrEnd() async {
     // Check if it is the last item in the list or not
     // If not then move to the next list
+    int index = checkList.indexWhere((e) => e == _toCheck!);
     bool isLast = checkList.length - 1 == index;
     if (isLast == false) {
       _toCheck = checkList[index + 1];
