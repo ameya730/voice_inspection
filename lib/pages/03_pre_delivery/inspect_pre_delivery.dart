@@ -1,4 +1,6 @@
+import 'package:barcode_newland_flutter/newland_scanner.dart';
 import 'package:flutter/material.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:voice_poc/features/checksheets/widgets/w_display_card.dart';
 import 'package:voice_poc/features/scanner/widgets/w_scan_qr.dart';
 import 'package:voice_poc/pages/03_pre_delivery/s_pre_delivery.dart';
@@ -18,10 +20,20 @@ class _PageInspectPreDeliveryState extends State<PageInspectPreDelivery> {
   final services = PreDeliveryServices();
 
   setScanValFn(String? val) => services.setSku = val ?? '-';
+  MobileScannerController scannerController = MobileScannerController();
 
   @override
   void initState() {
     WakelockPlus.enable();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      scannerController.barcodes.listen((event) {
+        print('the data is $event');
+      });
+      // Newlandscanner.listenForBarcodes.listen((event) {
+      //   print('The data is ${event.barcodeData}');
+      //   services.setSku = event.barcodeData;
+      // });
+    });
     super.initState();
   }
 
@@ -55,12 +67,7 @@ class _PageInspectPreDeliveryState extends State<PageInspectPreDelivery> {
       body: ListenableBuilder(
         listenable: services,
         builder: (context, child) => services.sku.isEmpty
-            ? Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: WDScanQR(
-                  returnValue: (scannedVal) => setScanValFn(scannedVal),
-                ),
-              )
+            ? WDLabel(label: 'Scan to begin inspection')
             : Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(

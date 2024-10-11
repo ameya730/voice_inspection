@@ -1,7 +1,4 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'package:voice_poc/features/bluetooth/f_bluetooth.dart';
-import 'package:voice_poc/features/record/widgets/w_record.dart';
 import 'package:voice_poc/pages/02_home/s_home.dart';
 import 'package:voice_poc/services/auth/auth_service.dart';
 import 'package:voice_poc/services/routes/c_routes.dart';
@@ -27,9 +24,7 @@ class _PageHomeState extends State<PageHome> {
     super.initState();
   }
 
-  setup() async {
-    await AudioService().switchToBluetoothMic();
-  }
+  setup() async {}
 
   @override
   Widget build(BuildContext context) {
@@ -61,8 +56,15 @@ class _PageHomeState extends State<PageHome> {
           children: [
             WDLabel(label: 'Select type of inspection : '),
             const Divider(),
-            InspectionTypeCard(),
-            WDRecord(),
+            InspectionTypeCard(heading: 'Primary Inspection', onclick: () {}),
+            InspectionTypeCard(heading: 'Secondary Inspection', onclick: () {}),
+            InspectionTypeCard(
+              heading: 'Pre-Delivery Inspection',
+              onclick: () => Navigator.pushNamed(
+                context,
+                Routes.preDeliveryInspection.path,
+              ),
+            ),
           ],
         ),
       ),
