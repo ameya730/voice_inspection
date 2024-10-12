@@ -21,9 +21,17 @@ class WDDisplayCheckListCard extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            border: Border.all(
-              color: Colors.grey.shade300,
-              width: 1,
+            border: Border(
+              left: BorderSide(
+                color: model.status == Keywords.passed.prompt
+                    ? AppColors.success.color
+                    : model.status == Keywords.failed.prompt
+                        ? AppColors.failure.color
+                        : model == service.toCheck
+                            ? Colors.grey
+                            : Colors.white,
+                width: 10,
+              ),
             ),
             borderRadius: BorderRadius.circular(4),
           ),
@@ -42,43 +50,24 @@ class WDDisplayCheckListCard extends StatelessWidget {
                               model.status != null ? Colors.grey : Colors.black,
                         ),
                   ),
-
-                  //
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      if (model.status == Keywords.passed.prompt) ...[
-                        Icon(
-                          Icons.check_circle,
-                          color: AppColors.success.color,
-                          size: 24,
-                        ),
-                      ] else if (model.status == Keywords.failed.prompt) ...[
-                        Icon(
-                          Icons.check_circle,
-                          color: AppColors.failure.color,
-                          size: 24,
-                        ),
-                      ] else if (model == service.toCheck) ...[
-                        const Icon(Icons.mic, size: 24),
-                      ]
-                    ],
-                  ),
+                  if (service.isRecordingVoice && service.toCheck == model) ...[
+                    Image.asset(
+                      'assets/gifs/sound_wave.gif',
+                      height: 32,
+                      fit: BoxFit.fitHeight,
+                    ),
+                  ] else if (model.recordedPath != null) ...[
+                    InkWell(
+                      onTap: () async {
+                        await AudioPlayer()
+                            .play(DeviceFileSource(model.recordedPath!));
+                      },
+                      child: Icon(Icons.play_circle_outline, size: 32),
+                    ),
+                  ]
                 ],
               ),
               // When recording is enabled
-              if (service.isRecordingVoice && service.toCheck == model) ...[
-                WDLabel(label: 'Recording...${service.isRecordingVoice}'),
-              ],
-              if (model.recordedPath != null) ...[
-                IconButton(
-                  onPressed: () async {
-                    await AudioPlayer()
-                        .play(DeviceFileSource(model.recordedPath!));
-                  },
-                  icon: Icon(Icons.play_arrow),
-                ),
-              ]
             ],
           ),
         ),
