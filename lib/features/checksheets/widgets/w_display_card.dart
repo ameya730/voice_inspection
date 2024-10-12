@@ -1,7 +1,7 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:voice_poc/features/checksheets/constants/c_key_prompts.dart';
 import 'package:voice_poc/features/checksheets/models/m_check_sheet.dart';
-import 'package:voice_poc/features/record/widgets/w_record.dart';
 import 'package:voice_poc/pages/03_pre_delivery/s_pre_delivery.dart';
 import 'package:voice_poc/services/themes/constants/colors.dart';
 import 'package:voice_poc/widgets/labels/w_label.dart';
@@ -28,29 +28,44 @@ class WDDisplayCheckListCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(4),
           ),
           padding: const EdgeInsets.all(8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              WDLabel(label: model.gROUP ?? '-', isFlexible: true),
-
-              //
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // When recording is enabled
-                  if (service.isRecording && service.toCheck == model) ...[
-                    WDRecord(),
-                  ],
+                  WDLabel(label: model.gROUP ?? '-', isFlexible: true),
 
-                  if (model.status == Keywords.passed.prompt) ...[
-                    Icon(Icons.check_circle, color: AppColors.success.color),
-                  ] else if (model.status == Keywords.failed.prompt) ...[
-                    Icon(Icons.check_circle, color: AppColors.failure.color),
-                  ] else if (model == service.toCheck) ...[
-                    const Icon(Icons.mic),
-                  ]
+                  //
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      if (model.status == Keywords.passed.prompt) ...[
+                        Icon(Icons.check_circle,
+                            color: AppColors.success.color),
+                      ] else if (model.status == Keywords.failed.prompt) ...[
+                        Icon(Icons.check_circle,
+                            color: AppColors.failure.color),
+                      ] else if (model == service.toCheck) ...[
+                        const Icon(Icons.mic),
+                      ]
+                    ],
+                  ),
                 ],
               ),
+              // When recording is enabled
+              if (service.isRecordingVoice && service.toCheck == model) ...[
+                WDLabel(label: 'Recording...'),
+              ],
+              if (model.recordedPath != null) ...[
+                IconButton(
+                  onPressed: () async {
+                    await AudioPlayer()
+                        .play(DeviceFileSource(model.recordedPath!));
+                  },
+                  icon: Icon(Icons.play_arrow),
+                ),
+              ]
             ],
           ),
         ),

@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:voice_poc/features/checksheets/constants/c_key_prompts.dart';
 import 'package:voice_poc/features/checksheets/models/m_check_sheet.dart';
 import 'package:voice_poc/features/checksheets/services/s_checksheet.dart';
+import 'package:voice_poc/features/record/services/s_record.dart';
 import 'package:voice_poc/features/speech_to_text/services/s_speech_to_text.dart';
 import 'package:voice_poc/features/text_to_speech/services/s_text_to_speech.dart';
 
 class PreDeliveryServices extends CheckSheetService
-    with TTSServices, SpeechToTextServices, ChangeNotifier {
+    with TTSServices, SpeechToTextServices, RecordServices, ChangeNotifier {
   // Scan a QR code to get the vehicle identification number
   String _sku = '';
   String get sku => _sku;
@@ -27,8 +28,11 @@ class PreDeliveryServices extends CheckSheetService
   // Boolean to let the user know that the inspection is complete
   bool? isComplete;
 
-  bool _isRecording = false;
-  bool get isRecording => _isRecording;
+  bool _isRecordingVoice = false;
+  bool get isRecordingVoice => _isRecordingVoice;
+
+  // Current index of the element in the checklist that is being inspected
+  int _currentIndex = 0;
 
   // Function to fetch the checklist
   Future getCheckList(String sku) async {
@@ -51,7 +55,7 @@ class PreDeliveryServices extends CheckSheetService
     // Finally start listening to the result
 
     super.speechService?.onResult().forEach(
-      (result) {
+      (result) async {
         print(result);
         if (result.contains('verified')) {
           updateStatus(Keywords.passed.prompt);
@@ -60,11 +64,14 @@ class PreDeliveryServices extends CheckSheetService
           updateStatus(Keywords.failed.prompt);
         }
         if (result.contains('rec on')) {
-          _isRecording = true;
+          _isRecordingVoice = true;
           notifyListeners();
         }
-        if (result.contains('rec off')) {
-          _isRecording = false;
+        if (result.contains('rec off') && _isRecordingVoice) {
+          _isRecordingVoice = false;
+          await super.toggleRecording();
+          _checkList[_currentIndex].recordedPath = super.finalPath;
+          await moveToNextOrEnd();
           notifyListeners();
         }
       },
@@ -93,46 +100,47 @@ class PreDeliveryServices extends CheckSheetService
     // Update the status
     _toCheck?.status = status;
     // Update the status for the object in the list
-    int index = checkList.indexWhere((e) => e == _toCheck!);
-    checkList[index].status = status;
+    _currentIndex = checkList.indexWhere((e) => e == _toCheck!);
+    checkList[_currentIndex].status = status;
 
     // If the inspection has failed then the user needs to record a short description
     // that explains why the inspection has failed
     // At this point, pause the speech recogintion part and allow the user to record
     // the details
-
-    // Pause speech services
-    await super.speechService?.setPause(paused: true);
-
-    // Prompt the user to wait for the beep
-    await super.narrateText(
-      'Please record the reason for rejection after the beep',
-    );
-
-    // Play the beep
-    await AudioPlayer().play(AssetSource('assets/sounds/beep_sound.mp3'));
-
-    // Once the user finishes recording the description un pause the speech recogniser
-    // and continue with the inspection
-    await super.speechService?.setPause(paused: false);
-
-    moveToNextOrEnd();
+    if (status == Keywords.failed.prompt) {
+      await recordReason();
+    } else {
+      moveToNextOrEnd();
+    }
   }
 
   moveToNextOrEnd() async {
     // Check if it is the last item in the list or not
     // If not then move to the next list
-    int index = checkList.indexWhere((e) => e == _toCheck!);
-    bool isLast = checkList.length - 1 == index;
+    bool isLast = checkList.length - 1 == _currentIndex;
     if (isLast == false) {
-      _toCheck = checkList[index + 1];
+      _toCheck = checkList[_currentIndex + 1];
       isComplete = false;
     } else {
       _toCheck = null;
+      _currentIndex = 0;
       isComplete = true;
     }
 
     await setupToCheck();
+  }
+
+  Future recordReason() async {
+    // Prompt the user to wait for the beep
+    await super.speechService?.setPause(paused: true);
+    await super.narrateText('Record reason for rejection');
+    super.flutterTts?.setCompletionHandler(() async {
+      await super.speechService?.setPause(paused: false);
+      _isRecordingVoice = true;
+      notifyListeners();
+
+      await super.toggleRecording();
+    });
   }
 
   disposeServices() async => await super.disposeSST();
