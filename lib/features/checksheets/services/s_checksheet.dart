@@ -5,6 +5,7 @@ import 'package:voice_poc/services/data/s_data.dart';
 class CheckSheetService with DataServices {
   Future getCheckSheetList(String sku) async {
     var result = await crud(APIs.getCheckSheetList, [sku]);
+    print(result);
     return parseLists<MCheckSheet>(
       result,
       MCheckSheet.fromJson,
