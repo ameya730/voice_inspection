@@ -63,10 +63,7 @@ class PreDeliveryServices extends CheckSheetService
         if (result.contains('rejected')) {
           updateStatus(Keywords.failed.prompt);
         }
-        if (result.contains('rec on')) {
-          _isRecordingVoice = true;
-          notifyListeners();
-        }
+
         if (result.contains('rec off') && _isRecordingVoice) {
           _isRecordingVoice = false;
           await super.toggleRecording();
@@ -108,7 +105,7 @@ class PreDeliveryServices extends CheckSheetService
     // At this point, pause the speech recogintion part and allow the user to record
     // the details
     if (status == Keywords.failed.prompt) {
-      await recordReason();
+      await recordReason(status);
     } else {
       moveToNextOrEnd();
     }
@@ -130,16 +127,17 @@ class PreDeliveryServices extends CheckSheetService
     await setupToCheck();
   }
 
-  Future recordReason() async {
+  Future recordReason(String status) async {
     // Prompt the user to wait for the beep
-    await super.speechService?.setPause(paused: true);
     await super.narrateText('Record reason for rejection');
-    super.flutterTts?.setCompletionHandler(() async {
-      await super.speechService?.setPause(paused: false);
-      _isRecordingVoice = true;
-      notifyListeners();
 
-      await super.toggleRecording();
+    super.flutterTts?.setCompletionHandler(() async {
+      if (status == Keywords.failed.prompt) {
+        print('When does it come here ?');
+        _isRecordingVoice = true;
+        notifyListeners();
+        await super.toggleRecording();
+      }
     });
   }
 

@@ -55,7 +55,7 @@ class WDDisplayCheckListCard extends StatelessWidget {
               ),
               // When recording is enabled
               if (service.isRecordingVoice && service.toCheck == model) ...[
-                WDLabel(label: 'Recording...'),
+                WDLabel(label: 'Recording...${service.isRecordingVoice}'),
               ],
               if (model.recordedPath != null) ...[
                 IconButton(
