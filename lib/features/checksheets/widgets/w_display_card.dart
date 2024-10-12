@@ -48,13 +48,19 @@ class WDDisplayCheckListCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       if (model.status == Keywords.passed.prompt) ...[
-                        Icon(Icons.check_circle,
-                            color: AppColors.success.color),
+                        Icon(
+                          Icons.check_circle,
+                          color: AppColors.success.color,
+                          size: 24,
+                        ),
                       ] else if (model.status == Keywords.failed.prompt) ...[
-                        Icon(Icons.check_circle,
-                            color: AppColors.failure.color),
+                        Icon(
+                          Icons.check_circle,
+                          color: AppColors.failure.color,
+                          size: 24,
+                        ),
                       ] else if (model == service.toCheck) ...[
-                        const Icon(Icons.mic),
+                        const Icon(Icons.mic, size: 24),
                       ]
                     ],
                   ),
