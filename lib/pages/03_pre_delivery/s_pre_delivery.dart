@@ -105,7 +105,7 @@ class PreDeliveryServices extends CheckSheetService
     // At this point, pause the speech recogintion part and allow the user to record
     // the details
     if (status == Keywords.failed.prompt) {
-      await recordReason(status);
+      await recordReason();
     } else {
       moveToNextOrEnd();
     }
@@ -127,13 +127,12 @@ class PreDeliveryServices extends CheckSheetService
     await setupToCheck();
   }
 
-  Future recordReason(String status) async {
+  Future recordReason() async {
     // Prompt the user to wait for the beep
     await super.narrateText('Record reason for rejection');
 
     super.flutterTts?.setCompletionHandler(() async {
-      if (status == Keywords.failed.prompt) {
-        print('When does it come here ?');
+      if (_toCheck?.status == Keywords.failed.prompt) {
         _isRecordingVoice = true;
         notifyListeners();
         await super.toggleRecording();
