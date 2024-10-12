@@ -131,6 +131,11 @@ class PreDeliveryServices extends CheckSheetService
     // Prompt the user to wait for the beep
     await super.narrateText('Record reason for rejection');
 
+    // The below logic is required because the text to speech "speak" method
+    // does not properly wait for the future. Hence if we do not use the below handler
+    // the [toggleRecording] function is executed earlier and also records the text
+    // In addition, since this handler is a listener it listens to all scenarios where
+    // flutterTts is used
     super.flutterTts?.setCompletionHandler(() async {
       if (_toCheck?.status == Keywords.failed.prompt) {
         _isRecordingVoice = true;

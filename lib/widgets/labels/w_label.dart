@@ -17,7 +17,7 @@ class WDLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (isFlexible == true) {
-      return Flexible(child: AutoSizeText(label));
+      return Flexible(child: AutoSizeText(label, style: style));
     }
 
     return AutoSizeText(

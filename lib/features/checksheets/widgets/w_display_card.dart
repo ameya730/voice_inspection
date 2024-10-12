@@ -34,7 +34,14 @@ class WDDisplayCheckListCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  WDLabel(label: model.gROUP ?? '-', isFlexible: true),
+                  WDLabel(
+                    label: model.gROUP ?? '-',
+                    isFlexible: true,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color:
+                              model.status != null ? Colors.grey : Colors.black,
+                        ),
+                  ),
 
                   //
                   Row(
