@@ -69,8 +69,8 @@ class PreDeliveryServices extends CheckSheetService
           _isRecordingVoice = false;
           await super.toggleRecording();
 
-          // _checkList[_currentIndex].details?[_checkDetailsIndex].recordedPath =
-          //     super.finalPath;
+          _checkList[_currentIndex].details?[_checkDetailsIndex].recordedPath =
+              super.finalPath;
           await moveToNextOrEnd();
           notifyListeners();
         }

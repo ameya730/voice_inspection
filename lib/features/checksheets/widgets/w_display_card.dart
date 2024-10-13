@@ -132,7 +132,22 @@ class DisplaySubDetails extends StatelessWidget {
               borderRadius: BorderRadius.circular(4),
             ),
             padding: const EdgeInsets.all(8),
-            child: WDLabel(label: e?.gROUPDET ?? '-'),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                WDLabel(label: e?.gROUPDET ?? '-'),
+                if (e?.recordedPath != null) ...[
+                  InkWell(
+                    onTap: () async {
+                      await AudioPlayer()
+                          .play(DeviceFileSource(e?.recordedPath ?? '-'));
+                    },
+                    child: Icon(Icons.play_circle_outline, size: 32),
+                  ),
+                ]
+              ],
+            ),
           ),
         );
       },
