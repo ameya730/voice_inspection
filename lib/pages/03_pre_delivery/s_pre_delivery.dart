@@ -1,7 +1,7 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:voice_poc/features/checksheets/constants/c_key_prompts.dart';
 import 'package:voice_poc/features/checksheets/models/m_check_sheet.dart';
+import 'package:voice_poc/features/checksheets/models/m_check_sheet_details.dart';
 import 'package:voice_poc/features/checksheets/services/s_checksheet.dart';
 import 'package:voice_poc/features/record/services/s_record.dart';
 import 'package:voice_poc/features/speech_to_text/services/s_speech_to_text.dart';
@@ -33,6 +33,7 @@ class PreDeliveryServices extends CheckSheetService
 
   // Current index of the element in the checklist that is being inspected
   int _currentIndex = 0;
+  int get currentIndex => _currentIndex;
 
   // Function to fetch the checklist
   Future getCheckList(String sku) async {
@@ -67,7 +68,9 @@ class PreDeliveryServices extends CheckSheetService
         if (result.contains('rec off') && _isRecordingVoice) {
           _isRecordingVoice = false;
           await super.toggleRecording();
-          _checkList[_currentIndex].recordedPath = super.finalPath;
+
+          // _checkList[_currentIndex].details?[_checkDetailsIndex].recordedPath =
+          //     super.finalPath;
           await moveToNextOrEnd();
           notifyListeners();
         }
@@ -94,37 +97,62 @@ class PreDeliveryServices extends CheckSheetService
 
   // This function is used to update the status of the current checklist
   Future updateStatus(String status) async {
-    // Update the status
-    _toCheck?.status = status;
-    // Update the status for the object in the list
-    _currentIndex = checkList.indexWhere((e) => e == _toCheck!);
-    checkList[_currentIndex].status = status;
+    // When an inspection has been rejected then use this function
+    // This is because the user needs to go through each sub detail
+    // and mark the apppropriate one as rejected
+    if (_toCheckDetails != null) {
+      _toCheckDetails?.status = status;
+      _toCheck?.details?[_checkDetailsIndex].status = status;
+      if (status == Keywords.failed.prompt) {
+        recordReason();
+        return;
+      }
+      // When an inspection has been verified then use this
+      // This is because the main object should be updated
+    } else if (status == Keywords.passed.prompt) {
+      // Update the status
+      _toCheck?.status = status;
+      checkList[_currentIndex].status = status;
+    }
 
     // If the inspection has failed then the user needs to record a short description
     // that explains why the inspection has failed
     // At this point, pause the speech recogintion part and allow the user to record
     // the details
-    if (status == Keywords.failed.prompt) {
-      await recordReason();
+
+    if (_toCheckDetails != null || status == Keywords.failed.prompt) {
+      evaluateSubDetails();
     } else {
       moveToNextOrEnd();
     }
   }
 
   moveToNextOrEnd() async {
-    // Check if it is the last item in the list or not
-    // If not then move to the next list
-    bool isLast = checkList.length - 1 == _currentIndex;
-    if (isLast == false) {
-      _toCheck = checkList[_currentIndex + 1];
-      isComplete = false;
-    } else {
-      _toCheck = null;
-      _currentIndex = 0;
-      isComplete = true;
+    // Once the user has reached the end of the inspection of the sub details
+    // Reset the attributes for checking the details
+    if (_toCheckDetails == _toCheck?.details?.last) {
+      _toCheckDetails = null;
+      _checkDetailsIndex = -1;
     }
 
-    await setupToCheck();
+    if (_toCheckDetails != null) {
+      evaluateSubDetails();
+    } else {
+      // Check if it is the last item in the list or not
+      // If not then move to the next list
+      bool isLast = checkList.length - 1 == _currentIndex;
+      if (isLast == false) {
+        _currentIndex = _currentIndex + 1;
+        _toCheck = checkList[_currentIndex];
+        isComplete = false;
+      } else {
+        _toCheck = null;
+        _currentIndex = 0;
+        isComplete = true;
+      }
+
+      await setupToCheck();
+    }
   }
 
   Future recordReason() async {
@@ -137,12 +165,40 @@ class PreDeliveryServices extends CheckSheetService
     // In addition, since this handler is a listener it listens to all scenarios where
     // flutterTts is used
     super.flutterTts?.setCompletionHandler(() async {
-      if (_toCheck?.status == Keywords.failed.prompt) {
+      if (_toCheckDetails?.status == Keywords.failed.prompt) {
         _isRecordingVoice = true;
         notifyListeners();
         await super.toggleRecording();
       }
     });
+  }
+
+  // When a group has been rejected then the user needs to go through each sub detail
+  // and state which is the one that has failed
+  // Post confirming the failure, the user needs to record a short description of the reason for rejection
+  CheckSheetDetails? _toCheckDetails;
+  int _checkDetailsIndex = -1;
+  int get checkDetailsIndex => _checkDetailsIndex;
+
+  evaluateSubDetails() async {
+    // If not proceed with the inspection
+    if (_toCheckDetails == _toCheck?.details?.last) {
+      moveToNextOrEnd();
+    } else {
+      // Increase the index by 1
+      // The default value is set at -1. Hence, it always starts with 0 over here
+      _checkDetailsIndex = _checkDetailsIndex + 1;
+
+      // Assign the object from the list
+      _toCheckDetails = _toCheck?.details?[_checkDetailsIndex];
+
+      // Narrate the selected subdetail
+      await super.narrateText(
+        _toCheckDetails?.gROUPDET ?? 'Something went wrong',
+      );
+    }
+
+    notifyListeners();
   }
 
   disposeServices() async => await super.disposeSST();

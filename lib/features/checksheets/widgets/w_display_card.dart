@@ -109,9 +109,9 @@ class DisplaySubDetails extends StatelessWidget {
     return ListView.builder(
       physics: NeverScrollableScrollPhysics(),
       shrinkWrap: true,
-      itemCount: model.cHECKSHEETDET?.length,
+      itemCount: model.details?.length,
       itemBuilder: (context, index) {
-        var e = model.cHECKSHEETDET?[index];
+        var e = model.details?[index];
         return Padding(
           padding: const EdgeInsets.only(bottom: 8.0, right: 8.0),
           child: Container(
@@ -119,9 +119,9 @@ class DisplaySubDetails extends StatelessWidget {
               color: Colors.blueGrey.shade50,
               border: Border(
                 left: BorderSide(
-                  color: model.status == Keywords.passed.prompt
+                  color: e?.status == Keywords.passed.prompt
                       ? AppColors.success.color
-                      : model.status == Keywords.failed.prompt
+                      : e?.status == Keywords.failed.prompt
                           ? AppColors.failure.color
                           : model == service.toCheck
                               ? Colors.grey

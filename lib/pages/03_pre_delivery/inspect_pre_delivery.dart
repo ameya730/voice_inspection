@@ -87,6 +87,9 @@ class _PageInspectPreDeliveryState extends State<PageInspectPreDelivery> {
                           }),
                       const Divider(),
                     ],
+                    WDLabel(
+                        label:
+                            'Current Index : ${services.currentIndex} & details index : ${services.checkDetailsIndex}'),
                     Expanded(
                       child: ListView(
                         children: services.checkList
