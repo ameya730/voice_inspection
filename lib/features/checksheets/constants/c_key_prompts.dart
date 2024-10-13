@@ -1,6 +1,6 @@
 enum Keywords {
-  passed('confirm'),
-  failed('Failed'),
+  passed('verified'),
+  failed('rejected'),
   showEarlier('Show Earlier');
 
   final String prompt;

@@ -1,17 +1,21 @@
-class CHECKSHEETDET {
+class CheckSheetDetails {
   int? id;
   int? sEQUENCE;
   String? gROUPDET;
   int? gROUPDETID;
+  String? status;
+  String? recordedPath;
 
-  CHECKSHEETDET({
+  CheckSheetDetails({
     this.id,
     this.sEQUENCE,
     this.gROUPDET,
     this.gROUPDETID,
+    this.status,
+    this.recordedPath,
   });
 
-  CHECKSHEETDET.fromJson(Map<String, dynamic> json) {
+  CheckSheetDetails.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     sEQUENCE = json['SEQUENCE'];
     gROUPDET = json['GROUP_DET'];

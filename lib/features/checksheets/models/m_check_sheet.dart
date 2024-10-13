@@ -5,7 +5,7 @@ class MCheckSheet {
   String? sKU;
   String? gROUP;
   int? sEQUENCE;
-  List<CHECKSHEETDET>? cHECKSHEETDET;
+  List<CheckSheetDetails>? details;
   String? status;
   String? recordedPath;
 
@@ -14,7 +14,7 @@ class MCheckSheet {
     this.sKU,
     this.gROUP,
     this.sEQUENCE,
-    this.cHECKSHEETDET,
+    this.details,
     this.status,
     this.recordedPath,
   });
@@ -25,9 +25,9 @@ class MCheckSheet {
     gROUP = json['GROUP'];
     sEQUENCE = json['SEQUENCE'];
     if (json['CHECKSHEETDET'] != null) {
-      cHECKSHEETDET = <CHECKSHEETDET>[];
+      details = <CheckSheetDetails>[];
       json['CHECKSHEETDET'].forEach((v) {
-        cHECKSHEETDET!.add(CHECKSHEETDET.fromJson(v));
+        details!.add(CheckSheetDetails.fromJson(v));
       });
     }
   }
@@ -38,8 +38,8 @@ class MCheckSheet {
     data['SKU'] = sKU;
     data['GROUP'] = gROUP;
     data['SEQUENCE'] = sEQUENCE;
-    if (cHECKSHEETDET != null) {
-      data['CHECKSHEETDET'] = cHECKSHEETDET!.map((v) => v.toJson()).toList();
+    if (details != null) {
+      data['CHECKSHEETDET'] = details!.map((v) => v.toJson()).toList();
     }
     return data;
   }
