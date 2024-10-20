@@ -6,9 +6,11 @@ class WDButtonWithLoad extends StatefulWidget {
     super.key,
     required this.label,
     required this.callback,
+    this.isDisabled,
   });
   final String label;
   final Function() callback;
+  final bool? isDisabled;
 
   @override
   State<WDButtonWithLoad> createState() => _WDButtonWithLoadState();
@@ -19,6 +21,8 @@ class _WDButtonWithLoadState extends State<WDButtonWithLoad> {
 
   onClickFn() async {
     if (isLoading) return;
+
+    if (widget.isDisabled == true) return;
 
     isLoading = true;
     if (mounted) setState(() {});
@@ -35,7 +39,9 @@ class _WDButtonWithLoadState extends State<WDButtonWithLoad> {
     return ElevatedButton(
       style: ButtonStyle(
         backgroundColor: WidgetStatePropertyAll(
-          isLoading ? AppColors.disabled.color : AppColors.primary.color,
+          isLoading || (widget.isDisabled == true)
+              ? AppColors.disabled.color
+              : AppColors.primary.color,
         ),
       ),
       onPressed: () => onClickFn(),

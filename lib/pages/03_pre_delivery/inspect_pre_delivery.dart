@@ -39,6 +39,7 @@ class _PageInspectPreDeliveryState extends State<PageInspectPreDelivery> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.blueGrey.shade100,
       appBar: AppBar(
         title: WDLabel(label: 'Pre-Delivery Inspection'),
       ),
@@ -54,13 +55,21 @@ class _PageInspectPreDeliveryState extends State<PageInspectPreDelivery> {
                   : WDButtonWithLoad(
                       label: 'Start Inspection',
                       callback: () => services.initInspection(),
+                      isDisabled: services.toCheck != null ? true : false,
                     ),
         ),
       ],
       body: ListenableBuilder(
         listenable: services,
         builder: (context, child) => services.sku.isEmpty
-            ? WDLabel(label: 'Scan to begin inspection')
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Image.asset('assets/images/scan.png'),
+                  WDLabel(label: 'Scan to begin inspection'),
+                ],
+              )
             : Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
@@ -87,9 +96,6 @@ class _PageInspectPreDeliveryState extends State<PageInspectPreDelivery> {
                           }),
                       const Divider(),
                     ],
-                    WDLabel(
-                        label:
-                            'Current Index : ${services.currentIndex} & details index : ${services.checkDetailsIndex}'),
                     Expanded(
                       child: ListView(
                         children: services.checkList
