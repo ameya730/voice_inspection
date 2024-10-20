@@ -6,15 +6,28 @@ import 'package:voice_poc/features/checksheets/services/s_checksheet.dart';
 import 'package:voice_poc/features/record/services/s_record.dart';
 import 'package:voice_poc/features/speech_to_text/services/s_speech_to_text.dart';
 import 'package:voice_poc/features/text_to_speech/services/s_text_to_speech.dart';
+import 'package:voice_poc/features/vin/services/s_vin.dart';
 
 class PreDeliveryServices extends CheckSheetService
-    with TTSServices, SpeechToTextServices, RecordServices, ChangeNotifier {
+    with
+        TTSServices,
+        SpeechToTextServices,
+        RecordServices,
+        VinMixin,
+        ChangeNotifier {
   // Scan a QR code to get the vehicle identification number
+  String _vin = '';
+  String get vin => _vin;
+  set setVin(String str) {
+    _vin = str;
+    // Make the api call to fetch the sku and checklist
+    getCheckList();
+  }
+
   String _sku = '';
   String get sku => _sku;
   set setSku(String str) {
     _sku = str;
-    getCheckList(sku);
   }
 
   // Check list that displays the list of activities that need to be checked by the user
@@ -36,8 +49,13 @@ class PreDeliveryServices extends CheckSheetService
   int get currentIndex => _currentIndex;
 
   // Function to fetch the checklist
-  Future getCheckList(String sku) async {
-    _checkList = await getCheckSheetList(sku);
+  Future getCheckList() async {
+    _sku = await fetchSku(vin);
+
+    if (_sku.isNotEmpty) {
+      _checkList = await getCheckSheetList(sku);
+      print(_checkList);
+    }
 
     notifyListeners();
     return;
@@ -91,6 +109,10 @@ class PreDeliveryServices extends CheckSheetService
     }
 
     await super.narrateText(str);
+
+    // Once the inspection has been completed, update the result
+    if (isComplete == true) await completeInspection();
+
     notifyListeners();
     return;
   }
@@ -199,6 +221,34 @@ class PreDeliveryServices extends CheckSheetService
     }
 
     notifyListeners();
+  }
+
+  // This method is called once the inspection has been completed by the user
+  // It is called automatically once the last entry has been successfully updated
+  Future completeInspection() async {
+    // Create the model for update
+    List<Map<String, dynamic>> list = [];
+
+    for (var e in _checkList) {
+      for (var f in e.details!) {
+        Map<String, dynamic> map = {
+          'VIN': _vin,
+          'MODEL': '',
+          'SKU': _sku,
+          'GROUPID': e.gROUPID,
+          'GROUP_DET_ID': f.gROUPDETID,
+          'RESULT': e.status ?? f.status,
+          'ISSUE_DESC': '',
+          'RESOLVED': null,
+          'RESOUTION_DESC': null,
+          'EMP_ID': super.supa.auth.currentUser?.id,
+          'DT_TM': DateTime.now().toIso8601String(),
+        };
+        list.add(map);
+      }
+    }
+    await super.updateInspectedCheckSheet(list);
+    return;
   }
 
   disposeServices() async => await super.disposeSST();
