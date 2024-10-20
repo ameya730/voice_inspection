@@ -14,8 +14,13 @@ class CheckSheetService with DataServices {
 
   // Method to update the checklist in the database
   // once the inspection has been completed by the user
-  Future updateInspectedCheckSheet(List<Map<String, dynamic>> data) async {
-    var result = await super.supa.from('VEHPDIRESULT').insert(data).select();
-    print(result);
+  Future<bool> updateInspectedCheckSheet(
+      List<Map<String, dynamic>> data) async {
+    try {
+      await super.supa.from('VEHPDIRESULT').insert(data).select();
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 }

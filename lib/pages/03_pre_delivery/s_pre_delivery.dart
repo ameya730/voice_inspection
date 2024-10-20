@@ -54,7 +54,6 @@ class PreDeliveryServices extends CheckSheetService
 
     if (_sku.isNotEmpty) {
       _checkList = await getCheckSheetList(sku);
-      print(_checkList);
     }
 
     notifyListeners();
@@ -248,6 +247,7 @@ class PreDeliveryServices extends CheckSheetService
       }
     }
     await super.updateInspectedCheckSheet(list);
+
     return;
   }
 
