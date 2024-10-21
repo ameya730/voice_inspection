@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:voice_poc/features/checksheets/widgets/w_display_card.dart';
 import 'package:voice_poc/features/text_to_speech/widgets/w_change_speech_rate.dart';
 import 'package:voice_poc/pages/03_pre_delivery/s_pre_delivery.dart';
-import 'package:voice_poc/services/routes/c_routes.dart';
 import 'package:voice_poc/widgets/buttons/button_with_loader.dart';
 import 'package:voice_poc/widgets/labels/w_label.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
@@ -103,7 +102,10 @@ class _PageInspectPreDeliveryState extends State<PageInspectPreDelivery> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Image.asset('assets/images/scan.png'),
-                  WDLabel(label: 'Scan to begin inspection'),
+                  WDLabel(
+                    label: 'Scan VIN',
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
                 ],
               )
             : Padding(

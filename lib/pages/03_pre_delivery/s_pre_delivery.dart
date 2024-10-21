@@ -127,15 +127,15 @@ class PreDeliveryServices extends CheckSheetService
     // This is because the user needs to go through each sub detail
     // and mark the apppropriate one as rejected
     if (_toCheckDetails != null) {
-      _toCheckDetails?.status = status;
       _toCheck?.details?[_checkDetailsIndex].status = status;
+      _toCheckDetails?.status = status;
       if (status == Keywords.failed.prompt) {
         recordReason();
         return;
       }
       // When an inspection has been verified then use this
       // This is because the main object should be updated
-    } else if (status == Keywords.passed.prompt) {
+    } else {
       // Update the status
       _toCheck?.status = status;
       checkList[_currentIndex].status = status;
