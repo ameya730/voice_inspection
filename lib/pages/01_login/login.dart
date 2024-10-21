@@ -21,46 +21,53 @@ class _PageLoginState extends State<PageLogin> {
         body: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: WDLabel(
-                    label: 'Vehicle Inspection by Speech',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    'assets/images/voice_main_image.png',
+                    height: MediaQuery.of(context).size.height * 0.25,
+                    fit: BoxFit.fitHeight,
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextFormField(
-                    onChanged: (value) => service.setEmail = value,
-                    decoration: const InputDecoration(
-                      hintText: 'Input email',
-                      labelText: 'Email',
+                  Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: WDLabel(
+                      label: 'Vehicle Inspection by Speech',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextFormField(
-                    onChanged: (value) => service.setPassword = value,
-                    obscureText: true,
-                    decoration: const InputDecoration(
-                      hintText: 'Input Password',
-                      labelText: 'Password',
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextFormField(
+                      onChanged: (value) => service.setEmail = value,
+                      decoration: const InputDecoration(
+                        hintText: 'Input email',
+                        labelText: 'Email',
+                      ),
                     ),
                   ),
-                ),
-                WDButtonWithLoad(
-                  label: 'Login',
-                  callback: () async => await service.loginFn(context),
-                ),
-              ],
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextFormField(
+                      onChanged: (value) => service.setPassword = value,
+                      obscureText: true,
+                      decoration: const InputDecoration(
+                        hintText: 'Input Password',
+                        labelText: 'Password',
+                      ),
+                    ),
+                  ),
+                  WDButtonWithLoad(
+                    label: 'Login',
+                    callback: () async => await service.loginFn(context),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

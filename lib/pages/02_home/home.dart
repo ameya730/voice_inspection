@@ -47,7 +47,7 @@ class _PageHomeState extends State<PageHome> {
           ),
         ),
         title: const Text(
-          'Speech Demo',
+          'Vehicle Inspection',
         ),
       ),
       body: Padding(
@@ -59,7 +59,7 @@ class _PageHomeState extends State<PageHome> {
             InspectionTypeCard(heading: 'Primary Inspection', onclick: () {}),
             InspectionTypeCard(heading: 'Secondary Inspection', onclick: () {}),
             InspectionTypeCard(
-              heading: 'Pre-Delivery Inspection',
+              heading: 'Final Inspection',
               onclick: () => Navigator.pushNamed(
                 context,
                 Routes.preDeliveryInspection.path,

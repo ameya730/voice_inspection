@@ -51,7 +51,7 @@ ThemeData baseTheme = ThemeData(
   ),
   iconTheme: const IconThemeData(size: 16, color: Colors.black),
   primaryColor: Colors.blue.shade800,
-  scaffoldBackgroundColor: const Color(0xFF87B5F0),
+  scaffoldBackgroundColor: const Color(0xFFBE9E82),
   canvasColor: Colors.black.withOpacity(0.65),
   drawerTheme: DrawerThemeData(
     elevation: 2,
@@ -65,7 +65,7 @@ ThemeData baseTheme = ThemeData(
     ),
   ),
   appBarTheme: AppBarTheme(
-    backgroundColor: AppColors.primary.color,
+    backgroundColor: const Color(0xFFA35B1C),
     titleTextStyle: const TextStyle(
       fontSize: 18,
       color: Colors.white,

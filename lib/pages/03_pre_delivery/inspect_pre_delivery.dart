@@ -24,6 +24,7 @@ class _PageInspectPreDeliveryState extends State<PageInspectPreDelivery> {
     WakelockPlus.enable();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Newlandscanner.listenForBarcodes.listen((event) {
+        services.resetForNewInspection();
         services.setVin = event.barcodeData;
       });
     });
@@ -41,7 +42,7 @@ class _PageInspectPreDeliveryState extends State<PageInspectPreDelivery> {
     return Scaffold(
       backgroundColor: Colors.blueGrey.shade100,
       appBar: AppBar(
-        title: WDLabel(label: 'Pre-Delivery Inspection'),
+        title: WDLabel(label: 'Final Inspection'),
       ),
       persistentFooterButtons: [
         ListenableBuilder(
@@ -75,25 +76,16 @@ class _PageInspectPreDeliveryState extends State<PageInspectPreDelivery> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    WDLabel(label: 'Inspection of ${services.sku}'),
+                    WDLabel(
+                      label:
+                          'Inspection of ${services.sku} for vehicle : ${services.vehicleModel} [${services.vin}]',
+                    ),
                     const Divider(),
                     if (services.isComplete == true) ...[
                       WDLabel(
                         label:
-                            'You have completed the inspection of the vehicle.',
+                            'You have completed the inspection of the vehicle. Scan a barcode to commence inspection of next vehicle',
                       ),
-                      WDButtonWithLoad(
-                          label: 'Return to home page',
-                          callback: () async {
-                            // await services.disposeServices();
-                            if (context.mounted) {
-                              Navigator.pushNamedAndRemoveUntil(
-                                context,
-                                Routes.home.path,
-                                (route) => false,
-                              );
-                            }
-                          }),
                       const Divider(),
                     ],
                     Expanded(

@@ -30,6 +30,9 @@ class PreDeliveryServices extends CheckSheetService
     _sku = str;
   }
 
+  String? _vehicleModel = '';
+  String? get vehicleModel => _vehicleModel;
+
   // Check list that displays the list of activities that need to be checked by the user
   List<MCheckSheet> _checkList = [];
   List<MCheckSheet> get checkList => _checkList;
@@ -50,7 +53,9 @@ class PreDeliveryServices extends CheckSheetService
 
   // Function to fetch the checklist
   Future getCheckList() async {
-    _sku = await fetchSku(vin);
+    List list = await fetchSku(vin);
+    _sku = list.first;
+    _vehicleModel = list.last;
 
     if (_sku.isNotEmpty) {
       _checkList = await getCheckSheetList(sku);
@@ -248,6 +253,21 @@ class PreDeliveryServices extends CheckSheetService
     }
     await super.updateInspectedCheckSheet(list);
 
+    return;
+  }
+
+  resetForNewInspection() {
+    _vin = '';
+    _sku = '';
+    _vehicleModel = null;
+    _checkList = [];
+    _toCheck = null;
+    _isRecordingVoice = false;
+    _currentIndex = 0;
+    _toCheckDetails = null;
+    _checkDetailsIndex = -1;
+    isComplete = null;
+    notifyListeners();
     return;
   }
 
