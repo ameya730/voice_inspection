@@ -7,16 +7,39 @@ import 'package:voice_poc/pages/03_pre_delivery/s_pre_delivery.dart';
 import 'package:voice_poc/services/themes/constants/colors.dart';
 import 'package:voice_poc/widgets/labels/w_label.dart';
 
-class WDDisplayCheckListCard extends StatelessWidget {
+class WDDisplayCheckListCard extends StatefulWidget {
   const WDDisplayCheckListCard(
       {super.key, required this.model, required this.service});
   final MCheckSheet model;
   final PreDeliveryServices service;
 
   @override
+  State<WDDisplayCheckListCard> createState() => _WDDisplayCheckListCardState();
+}
+
+class _WDDisplayCheckListCardState extends State<WDDisplayCheckListCard> {
+  final ExpandableController _controller = ExpandableController();
+
+  @override
+  void initState() {
+    widget.service.addListener(
+      () {
+        print(widget.service.toCheck?.status);
+        if (widget.service.toCheck == widget.model) {
+          if (widget.service.toCheck?.status == 'rejected') {
+            _controller.expanded = true;
+            if (mounted) setState(() {});
+          }
+        }
+      },
+    );
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: service,
+      listenable: widget.service,
       builder: (context, child) => Padding(
         padding: const EdgeInsets.all(8),
         child: Container(
@@ -24,11 +47,11 @@ class WDDisplayCheckListCard extends StatelessWidget {
             color: Colors.white,
             border: Border(
               left: BorderSide(
-                color: model.status == Keywords.passed.prompt
+                color: widget.model.status == Keywords.passed.prompt
                     ? AppColors.success.color
-                    : model.status == Keywords.failed.prompt
+                    : widget.model.status == Keywords.failed.prompt
                         ? AppColors.failure.color
-                        : model == service.toCheck
+                        : widget.model == widget.service.toCheck
                             ? Colors.grey
                             : Colors.white,
                 width: 10,
@@ -38,12 +61,14 @@ class WDDisplayCheckListCard extends StatelessWidget {
           ),
           padding: const EdgeInsets.all(8),
           child: ExpandablePanel(
+            controller: _controller,
             theme: ExpandableThemeData(
               headerAlignment: ExpandablePanelHeaderAlignment.center,
             ),
-            header: DisplayHeader(model: model, service: service),
+            header: DisplayHeader(model: widget.model, service: widget.service),
             collapsed: const SizedBox(),
-            expanded: DisplaySubDetails(model: model, service: service),
+            expanded:
+                DisplaySubDetails(model: widget.model, service: widget.service),
           ),
         ),
       ),

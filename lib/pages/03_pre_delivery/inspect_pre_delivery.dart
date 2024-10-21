@@ -1,6 +1,7 @@
 import 'package:barcode_newland_flutter/newland_scanner.dart';
 import 'package:flutter/material.dart';
 import 'package:voice_poc/features/checksheets/widgets/w_display_card.dart';
+import 'package:voice_poc/features/text_to_speech/widgets/w_change_speech_rate.dart';
 import 'package:voice_poc/pages/03_pre_delivery/s_pre_delivery.dart';
 import 'package:voice_poc/services/routes/c_routes.dart';
 import 'package:voice_poc/widgets/buttons/button_with_loader.dart';
@@ -23,9 +24,10 @@ class _PageInspectPreDeliveryState extends State<PageInspectPreDelivery> {
   void initState() {
     WakelockPlus.enable();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Newlandscanner.listenForBarcodes.listen((event) {
-        services.resetForNewInspection();
-        services.setVin = event.barcodeData;
+      Newlandscanner.listenForBarcodes.listen((event) async {
+        await services.resetForNewInspection().then(
+              (value) => services.setVin = event.barcodeData,
+            );
       });
     });
     super.initState();
@@ -37,12 +39,45 @@ class _PageInspectPreDeliveryState extends State<PageInspectPreDelivery> {
     super.dispose();
   }
 
+  openSettingsFn() async {
+    await showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: Text('Speech Rate'),
+          actions: [
+            WDChangeSpeechRate(
+              val: services.getSpeechRate,
+              onChanged: (p0) {
+                services.setSpeechRate(p0);
+                if (mounted) setState(() {});
+              },
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.blueGrey.shade100,
       appBar: AppBar(
         title: WDLabel(label: 'Final Inspection'),
+        actions: [
+          InkWell(
+            onTap: () => openSettingsFn(),
+            child: Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: Icon(
+                Icons.settings,
+                size: 32,
+                color: Colors.white,
+              ),
+            ),
+          )
+        ],
       ),
       persistentFooterButtons: [
         ListenableBuilder(

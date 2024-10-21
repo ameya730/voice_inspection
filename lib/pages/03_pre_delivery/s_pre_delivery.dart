@@ -256,7 +256,7 @@ class PreDeliveryServices extends CheckSheetService
     return;
   }
 
-  resetForNewInspection() {
+  Future<void> resetForNewInspection() async {
     _vin = '';
     _sku = '';
     _vehicleModel = null;
