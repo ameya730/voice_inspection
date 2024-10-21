@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:voice_poc/features/checksheets/constants/c_key_prompts.dart';
 import 'package:voice_poc/features/checksheets/models/m_check_sheet.dart';
@@ -6,6 +8,7 @@ import 'package:voice_poc/features/checksheets/services/s_checksheet.dart';
 import 'package:voice_poc/features/record/services/s_record.dart';
 import 'package:voice_poc/features/speech_to_text/services/s_speech_to_text.dart';
 import 'package:voice_poc/features/text_to_speech/services/s_text_to_speech.dart';
+import 'package:voice_poc/features/upload/services/s_upload.dart';
 import 'package:voice_poc/features/vin/services/s_vin.dart';
 
 class PreDeliveryServices extends CheckSheetService
@@ -14,6 +17,7 @@ class PreDeliveryServices extends CheckSheetService
         SpeechToTextServices,
         RecordServices,
         VinMixin,
+        UploadService,
         ChangeNotifier {
   // Scan a QR code to get the vehicle identification number
   String _vin = '';
@@ -79,7 +83,7 @@ class PreDeliveryServices extends CheckSheetService
 
     super.speechService?.onResult().forEach(
       (result) async {
-        print(result);
+        // print(result);
         if (result.contains('verified')) {
           updateStatus(Keywords.passed.prompt);
         }
@@ -193,6 +197,8 @@ class PreDeliveryServices extends CheckSheetService
     super.flutterTts?.setCompletionHandler(() async {
       if (_toCheckDetails?.status == Keywords.failed.prompt) {
         _isRecordingVoice = true;
+        _checkList[_currentIndex].details?[_checkDetailsIndex].recordedPath =
+            super.finalPath;
         notifyListeners();
         await super.toggleRecording();
       }
@@ -249,6 +255,12 @@ class PreDeliveryServices extends CheckSheetService
           'DT_TM': DateTime.now().toIso8601String(),
         };
         list.add(map);
+        print(f.recordedPath);
+
+        // Upload recording
+        if (f.recordedPath != null) {
+          await super.upload(File(f.recordedPath!));
+        }
       }
     }
     await super.updateInspectedCheckSheet(list);
