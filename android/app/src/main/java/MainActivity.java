@@ -1,4 +1,4 @@
-package com.example.voice_poc;
+package com.example.voice_poc_other;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;

@@ -1,4 +1,4 @@
-import 'package:voice_poc/features/checksheets/models/m_check_sheet_details.dart';
+import 'package:voice_poc_other/features/checksheets/models/m_check_sheet_details.dart';
 
 class MCheckSheet {
   int? gROUPID;
@@ -24,6 +24,7 @@ class MCheckSheet {
     sKU = json['SKU'];
     gROUP = json['GROUP'];
     sEQUENCE = json['SEQUENCE'];
+
     if (json['CHECKSHEETDET'] != null) {
       details = <CheckSheetDetails>[];
       json['CHECKSHEETDET'].forEach((v) {

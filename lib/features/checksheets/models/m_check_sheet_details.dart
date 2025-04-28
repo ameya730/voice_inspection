@@ -5,6 +5,7 @@ class CheckSheetDetails {
   int? gROUPDETID;
   String? status;
   String? recordedPath;
+  int? station;
 
   CheckSheetDetails({
     this.id,
@@ -13,6 +14,7 @@ class CheckSheetDetails {
     this.gROUPDETID,
     this.status,
     this.recordedPath,
+    this.station,
   });
 
   CheckSheetDetails.fromJson(Map<String, dynamic> json) {
@@ -20,6 +22,7 @@ class CheckSheetDetails {
     sEQUENCE = json['SEQUENCE'];
     gROUPDET = json['GROUP_DET'];
     gROUPDETID = json['GROUP_DET_ID'];
+    station = json['station'];
   }
 
   Map<String, dynamic> toJson() {

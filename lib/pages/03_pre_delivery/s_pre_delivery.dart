@@ -1,15 +1,14 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:voice_poc/features/checksheets/constants/c_key_prompts.dart';
-import 'package:voice_poc/features/checksheets/models/m_check_sheet.dart';
-import 'package:voice_poc/features/checksheets/models/m_check_sheet_details.dart';
-import 'package:voice_poc/features/checksheets/services/s_checksheet.dart';
-import 'package:voice_poc/features/record/services/s_record.dart';
-import 'package:voice_poc/features/speech_to_text/services/s_speech_to_text.dart';
-import 'package:voice_poc/features/text_to_speech/services/s_text_to_speech.dart';
-import 'package:voice_poc/features/upload/services/s_upload.dart';
-import 'package:voice_poc/features/vin/services/s_vin.dart';
+import 'package:voice_poc_other/features/checksheets/constants/c_key_prompts.dart';
+import 'package:voice_poc_other/features/checksheets/models/m_check_sheet.dart';
+import 'package:voice_poc_other/features/checksheets/models/m_check_sheet_details.dart';
+import 'package:voice_poc_other/features/checksheets/services/s_checksheet.dart';
+import 'package:voice_poc_other/features/record/services/s_record.dart';
+import 'package:voice_poc_other/features/speech_to_text/services/s_speech_to_text.dart';
+import 'package:voice_poc_other/features/text_to_speech/services/s_text_to_speech.dart';
+import 'package:voice_poc_other/features/upload/services/s_upload.dart';
+import 'package:voice_poc_other/features/vin/services/s_vin.dart';
 
 class PreDeliveryServices extends CheckSheetService
     with
@@ -24,8 +23,6 @@ class PreDeliveryServices extends CheckSheetService
   String get vin => _vin;
   set setVin(String str) {
     _vin = str;
-    // Make the api call to fetch the sku and checklist
-    getCheckList();
   }
 
   String _sku = '';
@@ -57,6 +54,13 @@ class PreDeliveryServices extends CheckSheetService
 
   // Function to fetch the checklist
   Future getCheckList() async {
+    // Primarily check if the vin has already been inspected or not
+    bool check = await isVinOkToInspect(vin);
+    if (check == false) return false;
+
+    // First insert the vin in the database [vinsku master]
+    await insertVinInDb(vin);
+
     List list = await fetchSku(vin);
     _sku = list.first;
     _vehicleModel = list.last;
@@ -83,7 +87,7 @@ class PreDeliveryServices extends CheckSheetService
 
     super.speechService?.onResult().forEach(
       (result) async {
-        // print(result);
+        print(result);
         if (result.contains('verified')) {
           updateStatus(Keywords.passed.prompt);
         }
@@ -241,37 +245,38 @@ class PreDeliveryServices extends CheckSheetService
 
     for (var e in _checkList) {
       for (var f in e.details!) {
+        // Upload recording
+        dynamic audioFilePath;
+        if (f.recordedPath != null) {
+          audioFilePath = await super.upload(File(f.recordedPath!));
+        }
+
         Map<String, dynamic> map = {
           'VIN': _vin,
           'MODEL': '',
           'SKU': _sku,
           'GROUPID': e.gROUPID,
           'GROUP_DET_ID': f.gROUPDETID,
-          'RESULT': e.status ?? f.status,
+          'RESULT': f.status ?? e.status,
           'ISSUE_DESC': '',
           'RESOLVED': null,
           'RESOUTION_DESC': null,
           'EMP_ID': super.supa.auth.currentUser?.id,
           'DT_TM': DateTime.now().toIso8601String(),
+          'AudioFilePath': audioFilePath != false ? (audioFilePath ?? '') : '',
         };
         list.add(map);
-        print(f.recordedPath);
-
-        // Upload recording
-        if (f.recordedPath != null) {
-          await super.upload(File(f.recordedPath!));
-        }
       }
     }
     await super.updateInspectedCheckSheet(list);
-
+    await disposeSST();
     return;
   }
 
   Future<void> resetForNewInspection() async {
     _vin = '';
     _sku = '';
-    _vehicleModel = null;
+    _vehicleModel = '';
     _checkList = [];
     _toCheck = null;
     _isRecordingVoice = false;
@@ -279,6 +284,9 @@ class PreDeliveryServices extends CheckSheetService
     _toCheckDetails = null;
     _checkDetailsIndex = -1;
     isComplete = null;
+    setTempPath = '';
+    setFinalPath = '';
+
     notifyListeners();
     return;
   }

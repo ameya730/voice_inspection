@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:voice_poc/services/themes/constants/colors.dart';
+import 'package:voice_poc_other/services/themes/constants/colors.dart';
 
 ThemeData baseTheme = ThemeData(
   textTheme: const TextTheme(

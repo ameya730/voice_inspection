@@ -14,7 +14,7 @@
   </intent>
     </queries>
     <application
-        android:label="voice_poc"
+        android:label="voice_poc_other"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

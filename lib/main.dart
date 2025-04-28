@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
-import 'package:voice_poc/pages/00_landing/landing.dart';
-import 'package:voice_poc/services/routes/f_routes.dart';
-import 'package:voice_poc/services/themes/constants/base_theme.dart';
+import 'package:voice_poc_other/pages/00_landing/landing.dart';
+import 'package:voice_poc_other/services/routes/f_routes.dart';
+import 'package:voice_poc_other/services/themes/constants/base_theme.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Inspection',
       theme: baseTheme,
       home: const PageLanding(),
       onGenerateRoute: (settings) => PageTransition(

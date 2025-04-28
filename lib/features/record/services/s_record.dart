@@ -7,6 +7,8 @@ mixin RecordServices {
   String _tempPath = '';
   String _finalPath = '';
   String get finalPath => _finalPath;
+  set setTempPath(String str) => _tempPath = str;
+  set setFinalPath(String str) => _finalPath = str;
 
   Future toggleRecording() async {
     _tempPath = (await getTemporaryDirectory()).path;

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:voice_poc/pages/02_home/s_home.dart';
-import 'package:voice_poc/services/auth/auth_service.dart';
-import 'package:voice_poc/services/routes/c_routes.dart';
-import 'package:voice_poc/widgets/labels/w_label.dart';
-import 'package:voice_poc/widgets/pages/home/w_display_inspection_types.dart';
+import 'package:voice_poc_other/pages/02_home/s_home.dart';
+import 'package:voice_poc_other/services/auth/auth_service.dart';
+import 'package:voice_poc_other/services/routes/c_routes.dart';
+import 'package:voice_poc_other/widgets/labels/w_label.dart';
+import 'package:voice_poc_other/widgets/pages/home/w_display_inspection_types.dart';
 
 // This is the main page that a person sees when he logs in
 // The home page should primarily have an option for the person to scan a QR code and get the VIN number
@@ -47,7 +47,7 @@ class _PageHomeState extends State<PageHome> {
           ),
         ),
         title: const Text(
-          'Vehicle Inspection',
+          'Inspection',
         ),
       ),
       body: Padding(

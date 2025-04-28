@@ -6,15 +6,14 @@ mixin UploadService {
   String bucketName = 'inspections';
   String rejectionAudioBasePath = 'rejection_audio';
 
-  Future<bool> upload(File file) async {
+  Future upload(File file) async {
     String fileName = file.path.split('/').last;
     print(file.path.split('.').last);
     print(file);
     try {
-      await supa.storage
-          .from(bucketName)
-          .upload('$rejectionAudioBasePath/$fileName', file);
-      return true;
+      return await supa.storage.from(bucketName).upload(
+          '$rejectionAudioBasePath/$fileName', file,
+          fileOptions: FileOptions(contentType: 'audio/wav'));
     } catch (e) {
       print(e);
       return false;

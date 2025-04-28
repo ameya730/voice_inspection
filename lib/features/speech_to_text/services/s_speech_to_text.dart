@@ -26,6 +26,8 @@ mixin SpeechToTextServices {
   }
 
   Future disposeSST() async {
+    await _speechService?.setPause(paused: true);
+    await _speechService?.stop();
     await _speechService?.dispose();
     await _recognizer?.dispose();
   }

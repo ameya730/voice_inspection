@@ -1,11 +1,11 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
-import 'package:voice_poc/features/checksheets/constants/c_key_prompts.dart';
-import 'package:voice_poc/features/checksheets/models/m_check_sheet.dart';
-import 'package:voice_poc/pages/03_pre_delivery/s_pre_delivery.dart';
-import 'package:voice_poc/services/themes/constants/colors.dart';
-import 'package:voice_poc/widgets/labels/w_label.dart';
+import 'package:voice_poc_other/features/checksheets/constants/c_key_prompts.dart';
+import 'package:voice_poc_other/features/checksheets/models/m_check_sheet.dart';
+import 'package:voice_poc_other/pages/03_pre_delivery/s_pre_delivery.dart';
+import 'package:voice_poc_other/services/themes/constants/colors.dart';
+import 'package:voice_poc_other/widgets/labels/w_label.dart';
 
 class WDDisplayCheckListCard extends StatefulWidget {
   const WDDisplayCheckListCard(

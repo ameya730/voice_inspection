@@ -1,10 +1,11 @@
 import 'package:barcode_newland_flutter/newland_scanner.dart';
 import 'package:flutter/material.dart';
-import 'package:voice_poc/features/checksheets/widgets/w_display_card.dart';
-import 'package:voice_poc/features/text_to_speech/widgets/w_change_speech_rate.dart';
-import 'package:voice_poc/pages/03_pre_delivery/s_pre_delivery.dart';
-import 'package:voice_poc/widgets/buttons/button_with_loader.dart';
-import 'package:voice_poc/widgets/labels/w_label.dart';
+import 'package:voice_poc_other/features/checksheets/widgets/w_display_card.dart';
+import 'package:voice_poc_other/features/scanner/widgets/w_scan_qr.dart';
+import 'package:voice_poc_other/features/text_to_speech/widgets/w_change_speech_rate.dart';
+import 'package:voice_poc_other/pages/03_pre_delivery/s_pre_delivery.dart';
+import 'package:voice_poc_other/widgets/buttons/button_with_loader.dart';
+import 'package:voice_poc_other/widgets/labels/w_label.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 class PageInspectPreDelivery extends StatefulWidget {
@@ -25,7 +26,7 @@ class _PageInspectPreDeliveryState extends State<PageInspectPreDelivery> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Newlandscanner.listenForBarcodes.listen((event) async {
         await services.resetForNewInspection().then(
-              (value) => services.setVin = event.barcodeData,
+              (value) => onScanFn(event.barcodeData),
             );
       });
     });
@@ -35,7 +36,26 @@ class _PageInspectPreDeliveryState extends State<PageInspectPreDelivery> {
   @override
   void dispose() {
     WakelockPlus.disable();
+    services.disposeServices();
     super.dispose();
+  }
+
+  onScanFn(String barCode) async {
+    await services.resetForNewInspection().then(
+      (value) async {
+        services.setVin = barCode;
+        var res = await services.getCheckList();
+        if (res == false && mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: WDLabel(
+                label: 'This VIN has already been inspected.',
+              ),
+            ),
+          );
+        }
+      },
+    );
   }
 
   openSettingsFn() async {
@@ -83,6 +103,18 @@ class _PageInspectPreDeliveryState extends State<PageInspectPreDelivery> {
           listenable: services,
           builder: (context, child) =>
               services.isComplete == true || services.sku.isEmpty
+                  ? Align(
+                      alignment: Alignment.bottomLeft,
+                      child: WDScanQR(
+                        returnValue: (scannedVal) => onScanFn(scannedVal ?? ''),
+                      ),
+                    )
+                  : const SizedBox(),
+        ),
+        ListenableBuilder(
+          listenable: services,
+          builder: (context, child) =>
+              services.isComplete == true || services.sku.isEmpty
                   ? const SizedBox(
                       height: 0,
                       width: 0,
@@ -103,7 +135,7 @@ class _PageInspectPreDeliveryState extends State<PageInspectPreDelivery> {
                 children: [
                   Image.asset('assets/images/scan.png'),
                   WDLabel(
-                    label: 'Scan VIN',
+                    label: 'Scan Machine',
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                 ],
@@ -115,13 +147,13 @@ class _PageInspectPreDeliveryState extends State<PageInspectPreDelivery> {
                   children: [
                     WDLabel(
                       label:
-                          'Inspection of ${services.sku} for vehicle : ${services.vehicleModel} [${services.vin}]',
+                          'Inspection of ${services.sku} for machine : ${services.vehicleModel} [${services.vin}]',
                     ),
                     const Divider(),
                     if (services.isComplete == true) ...[
                       WDLabel(
                         label:
-                            'You have completed the inspection of the vehicle. Scan a barcode to commence inspection of next vehicle',
+                            'You have completed the inspection of the machine. Scan a barcode to commence inspection of next machine',
                       ),
                       const Divider(),
                     ],

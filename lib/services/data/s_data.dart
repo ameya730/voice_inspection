@@ -1,5 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:voice_poc/services/data/c_apis.dart';
+import 'package:voice_poc_other/services/data/c_apis.dart';
 
 mixin DataServices {
   final supa = Supabase.instance.client;

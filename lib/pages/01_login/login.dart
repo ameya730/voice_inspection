@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:voice_poc/pages/01_login/s_login.dart';
-import 'package:voice_poc/widgets/buttons/button_with_loader.dart';
-import 'package:voice_poc/widgets/labels/w_label.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:voice_poc_other/pages/01_login/s_login.dart';
+import 'package:voice_poc_other/widgets/buttons/button_with_loader.dart';
+import 'package:voice_poc_other/widgets/labels/w_label.dart';
 
 class PageLogin extends StatefulWidget {
   const PageLogin({super.key});
@@ -27,14 +28,14 @@ class _PageLoginState extends State<PageLogin> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Image.asset(
-                    'assets/images/voice_main_image.png',
+                    'assets/images/inspection.png',
                     height: MediaQuery.of(context).size.height * 0.25,
                     fit: BoxFit.fitHeight,
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8),
                     child: WDLabel(
-                      label: 'Vehicle Inspection by Speech',
+                      label: 'Inspection by Speech',
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.displayLarge?.copyWith(
                             fontWeight: FontWeight.bold,

@@ -2,6 +2,24 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 mixin VinMixin {
   final supa = Supabase.instance.client;
+
+  // This method is use to update the VIN in the SKU master database
+  // At the present moment the SKU reference has been hard coded in the function
+  // but in the future an alternative would need to be identified for it
+  Future insertVinInDb(String vin) async {
+    List<Map<String, dynamic>> res =
+        await supa.from('VINSKUMAST').select("*").eq('VIN', vin);
+    if (res.isNotEmpty) return;
+
+    await supa.from('VINSKUMAST').insert([
+      {'VIN': vin, 'SKU': '00JU0AZZ'}
+    ]).select();
+
+    return;
+  }
+
+  // Fetch the SKU number for this the selected VIN
+  // In the future this would be replaced as well
   Future<List> fetchSku(String vin) async {
     try {
       List<Map<String, dynamic>> result =
@@ -16,5 +34,19 @@ mixin VinMixin {
     } catch (e) {
       return [];
     }
+  }
+
+  // The below method checks if a VIN has already been inspected or not
+  // It should return a bool with true being ok to inspect and false being already inspected
+  Future<bool> isVinOkToInspect(String vin) async {
+    try {
+      List<Map<String, dynamic>> res =
+          await supa.from('VEHPDIRESULT').select("*").eq('VIN', vin);
+      if (res.isNotEmpty) return false;
+    } catch (e) {
+      return true;
+    }
+
+    return true;
   }
 }

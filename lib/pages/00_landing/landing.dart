@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:voice_poc/pages/00_landing/landing_service.dart';
-import 'package:voice_poc/services/routes/c_routes.dart';
+import 'package:voice_poc_other/pages/00_landing/landing_service.dart';
+import 'package:voice_poc_other/services/routes/c_routes.dart';
 
 class PageLanding extends StatelessWidget {
   const PageLanding({super.key});

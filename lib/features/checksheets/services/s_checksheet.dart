@@ -1,6 +1,6 @@
-import 'package:voice_poc/features/checksheets/models/m_check_sheet.dart';
-import 'package:voice_poc/services/data/c_apis.dart';
-import 'package:voice_poc/services/data/s_data.dart';
+import 'package:voice_poc_other/features/checksheets/models/m_check_sheet.dart';
+import 'package:voice_poc_other/services/data/c_apis.dart';
+import 'package:voice_poc_other/services/data/s_data.dart';
 
 class CheckSheetService with DataServices {
   // Method to fetch the checklist that the user needs to inspect

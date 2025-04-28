@@ -1,5 +1,5 @@
 enum Links {
-  devLink('https://uwqgirilfzlehswboqio.supabase.co/'),
+  devLink('https://ejcbncpljwlloljvbpgz.supabase.co/'),
   prodLink('');
 
   final String path;
