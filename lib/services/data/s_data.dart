@@ -19,7 +19,8 @@ mixin DataServices {
         case APIs.getCheckSheetList:
           return await supa
               .from('CHECKSHEETMAST')
-              .select('GROUP_ID,SKU,GROUP,SEQUENCE,CHECKSHEETDET!inner(*)')
+              .select(
+                  'GROUP_ID,SKU,GROUP,SEQUENCE,station,CHECKSHEETDET!inner(*)')
               .eq('SKU', params[0]);
 
         default:

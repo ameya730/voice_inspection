@@ -1,0 +1,8 @@
+Steps that need to be incorporated
+
+The inspection should be station wise (also one final PDI option should be given at the end)
+Once the VIN has been scanned send the VIN and the station from where the VIN has been scanned. 
+In SUPABASE check if this VIN has been scanned for this station or not. 
+If yes, then indicate a response accordingly.
+
+At the dashboard level also this logic needs to be changed.

@@ -9,6 +9,7 @@ import 'package:voice_poc_other/features/speech_to_text/services/s_speech_to_tex
 import 'package:voice_poc_other/features/text_to_speech/services/s_text_to_speech.dart';
 import 'package:voice_poc_other/features/upload/services/s_upload.dart';
 import 'package:voice_poc_other/features/vin/services/s_vin.dart';
+import 'package:voice_poc_other/widgets/labels/w_label.dart';
 
 class PreDeliveryServices extends CheckSheetService
     with
@@ -18,6 +19,10 @@ class PreDeliveryServices extends CheckSheetService
         VinMixin,
         UploadService,
         ChangeNotifier {
+  // Basic loader parameter
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+
   // Scan a QR code to get the vehicle identification number
   String _vin = '';
   String get vin => _vin;
@@ -52,23 +57,45 @@ class PreDeliveryServices extends CheckSheetService
   int _currentIndex = 0;
   int get currentIndex => _currentIndex;
 
+  int? _station;
+  int? get station => _station;
+  set setStation(int? i) => _station = i;
+
   // Function to fetch the checklist
-  Future getCheckList() async {
+  Future getCheckList(BuildContext context) async {
+    _isLoading = true;
+    notifyListeners();
+
     // Primarily check if the vin has already been inspected or not
-    bool check = await isVinOkToInspect(vin);
-    if (check == false) return false;
+    bool check = await isVinOkToInspect(vin, _station);
+    if (check != false) {
+      // First insert the vin in the database [vinsku master]
+      await insertVinInDb(vin);
 
-    // First insert the vin in the database [vinsku master]
-    await insertVinInDb(vin);
+      List list = await fetchSku(vin);
+      _sku = list.first;
+      _vehicleModel = list.last;
 
-    List list = await fetchSku(vin);
-    _sku = list.first;
-    _vehicleModel = list.last;
+      if (_sku.isNotEmpty) {
+        _checkList = await getCheckSheetList(sku);
 
-    if (_sku.isNotEmpty) {
-      _checkList = await getCheckSheetList(sku);
+        if (_station != null) {
+          _checkList.removeWhere((e) => e.station != _station);
+        }
+      }
+    } else {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: WDLabel(
+              label: 'This VIN has already been inspected.',
+            ),
+          ),
+        );
+      }
     }
 
+    _isLoading = false;
     notifyListeners();
     return;
   }
@@ -264,6 +291,7 @@ class PreDeliveryServices extends CheckSheetService
           'EMP_ID': super.supa.auth.currentUser?.id,
           'DT_TM': DateTime.now().toIso8601String(),
           'AudioFilePath': audioFilePath != false ? (audioFilePath ?? '') : '',
+          'station': _station,
         };
         list.add(map);
       }
@@ -287,7 +315,6 @@ class PreDeliveryServices extends CheckSheetService
     setTempPath = '';
     setFinalPath = '';
 
-    notifyListeners();
     return;
   }
 

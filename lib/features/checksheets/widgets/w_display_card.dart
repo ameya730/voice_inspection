@@ -3,6 +3,7 @@ import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:voice_poc_other/features/checksheets/constants/c_key_prompts.dart';
 import 'package:voice_poc_other/features/checksheets/models/m_check_sheet.dart';
+import 'package:voice_poc_other/features/checksheets/models/m_check_sheet_details.dart';
 import 'package:voice_poc_other/pages/03_pre_delivery/s_pre_delivery.dart';
 import 'package:voice_poc_other/services/themes/constants/colors.dart';
 import 'package:voice_poc_other/widgets/labels/w_label.dart';
@@ -24,7 +25,6 @@ class _WDDisplayCheckListCardState extends State<WDDisplayCheckListCard> {
   void initState() {
     widget.service.addListener(
       () {
-        print(widget.service.toCheck?.status);
         if (widget.service.toCheck == widget.model) {
           if (widget.service.toCheck?.status == 'rejected') {
             _controller.expanded = true;
@@ -45,6 +45,13 @@ class _WDDisplayCheckListCardState extends State<WDDisplayCheckListCard> {
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 10,
+                offset: Offset(0, 10),
+              ),
+            ],
             border: Border(
               left: BorderSide(
                 color: widget.model.status == Keywords.passed.prompt
@@ -53,7 +60,7 @@ class _WDDisplayCheckListCardState extends State<WDDisplayCheckListCard> {
                         ? AppColors.failure.color
                         : widget.model == widget.service.toCheck
                             ? Colors.grey
-                            : Colors.white,
+                            : Colors.black.withOpacity(0.1),
                 width: 10,
               ),
             ),
@@ -67,8 +74,10 @@ class _WDDisplayCheckListCardState extends State<WDDisplayCheckListCard> {
             ),
             header: DisplayHeader(model: widget.model, service: widget.service),
             collapsed: const SizedBox(),
-            expanded:
-                DisplaySubDetails(model: widget.model, service: widget.service),
+            expanded: DisplaySubDetails(
+              model: widget.model,
+              service: widget.service,
+            ),
           ),
         ),
       ),
@@ -135,45 +144,63 @@ class DisplaySubDetails extends StatelessWidget {
       itemCount: model.details?.length,
       itemBuilder: (context, index) {
         var e = model.details?[index];
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 8.0, right: 8.0),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.blueGrey.shade50,
-              border: Border(
-                left: BorderSide(
-                  color: e?.status == Keywords.passed.prompt
-                      ? AppColors.success.color
-                      : e?.status == Keywords.failed.prompt
-                          ? AppColors.failure.color
-                          : model == service.toCheck
-                              ? Colors.grey
-                              : Colors.white,
-                  width: 10,
-                ),
-              ),
-              borderRadius: BorderRadius.circular(4),
-            ),
-            padding: const EdgeInsets.all(8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                WDLabel(label: e?.gROUPDET ?? '-'),
-                if (e?.recordedPath != null) ...[
-                  InkWell(
-                    onTap: () async {
-                      await AudioPlayer()
-                          .play(DeviceFileSource(e?.recordedPath ?? '-'));
-                    },
-                    child: Icon(Icons.play_circle_outline, size: 32),
-                  ),
-                ]
-              ],
+        return SubDetailsCard(e: e, model: model, service: service);
+      },
+    );
+  }
+}
+
+class SubDetailsCard extends StatelessWidget {
+  const SubDetailsCard({
+    super.key,
+    required this.e,
+    required this.model,
+    required this.service,
+  });
+
+  final CheckSheetDetails? e;
+  final MCheckSheet model;
+  final PreDeliveryServices service;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0, right: 8.0, top: 8.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.teal.shade50,
+          border: Border(
+            left: BorderSide(
+              color: e?.status == Keywords.passed.prompt
+                  ? AppColors.success.color
+                  : e?.status == Keywords.failed.prompt
+                      ? AppColors.failure.color
+                      : model == service.toCheck
+                          ? Colors.grey
+                          : Colors.white,
+              width: 10,
             ),
           ),
-        );
-      },
+          borderRadius: BorderRadius.circular(4),
+        ),
+        padding: const EdgeInsets.all(8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            WDLabel(label: e?.gROUPDET ?? '-'),
+            if (e?.recordedPath != null) ...[
+              InkWell(
+                onTap: () async {
+                  await AudioPlayer()
+                      .play(DeviceFileSource(e?.recordedPath ?? '-'));
+                },
+                child: Icon(Icons.play_circle_outline, size: 32),   
+              ),
+            ],
+          ],
+        ),
+      ),
     );
   }
 }

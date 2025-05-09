@@ -23,11 +23,13 @@ class _WDScanQRState extends State<WDScanQR> {
 
   onDetect(BarcodeCapture capture) {
     if (scannedVal != null) return;
+    scannedVal = capture.toString();
     final List<Barcode> barcodes = capture.barcodes;
     for (final barcode in barcodes) {
       if (mounted) setState(() {});
       widget.returnValue(barcode.rawValue);
     }
+    scannedVal = null;
     if (context.mounted) Navigator.pop(context);
   }
 
@@ -49,7 +51,7 @@ class _WDScanQRState extends State<WDScanQR> {
   }
 
   openScanner() async {
-    await showModalBottomSheet(
+    await showDialog(
       context: context,
       builder: (context) => ClipRRect(
         borderRadius: BorderRadius.circular(8),

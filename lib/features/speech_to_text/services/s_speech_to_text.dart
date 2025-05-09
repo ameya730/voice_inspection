@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:vosk_flutter/vosk_flutter.dart';
 
 mixin SpeechToTextServices {
@@ -26,9 +27,14 @@ mixin SpeechToTextServices {
   }
 
   Future disposeSST() async {
-    await _speechService?.setPause(paused: true);
-    await _speechService?.stop();
-    await _speechService?.dispose();
-    await _recognizer?.dispose();
+    try {
+      await _speechService?.setPause(paused: true);
+      await _speechService?.stop();
+      await _speechService?.dispose();
+      await _recognizer?.dispose();
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return true;
   }
 }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:voice_poc_other/pages/01_login/s_login.dart';
 import 'package:voice_poc_other/widgets/buttons/button_with_loader.dart';
 import 'package:voice_poc_other/widgets/labels/w_label.dart';

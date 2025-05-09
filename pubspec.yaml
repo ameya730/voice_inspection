@@ -51,6 +51,8 @@ dependencies:
   timelines_plus: ^1.0.3
   expandable: ^5.0.1
   flutter_svg: ^2.0.9
+  multiple_image_camera: ^0.0.2
+  image_picker: ^1.1.2
 
 dev_dependencies:
   flutter_test:

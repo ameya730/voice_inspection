@@ -38,15 +38,19 @@ mixin VinMixin {
 
   // The below method checks if a VIN has already been inspected or not
   // It should return a bool with true being ok to inspect and false being already inspected
-  Future<bool> isVinOkToInspect(String vin) async {
+  Future<bool> isVinOkToInspect(String vin, int? station) async {
+    print('The values are ${{"vin_value": vin, "station_value": station}}');
     try {
-      List<Map<String, dynamic>> res =
-          await supa.from('VEHPDIRESULT').select("*").eq('VIN', vin);
-      if (res.isNotEmpty) return false;
+      var res = await supa.rpc(
+        'check_if_inspection_is_pending',
+        params: {"vin_value": vin, "station_value": station},
+      );
+      print('The response is $res');
+      if (res.first['exist'] == 'inspection_completed') return false;
+      return true;
     } catch (e) {
+      print(e);
       return true;
     }
-
-    return true;
   }
 }

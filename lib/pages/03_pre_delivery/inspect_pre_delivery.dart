@@ -17,17 +17,21 @@ class PageInspectPreDelivery extends StatefulWidget {
 
 class _PageInspectPreDeliveryState extends State<PageInspectPreDelivery> {
   final services = PreDeliveryServices();
-
   setScanValFn(String? val) => services.setSku = val ?? '-';
 
   @override
   void initState() {
     WakelockPlus.enable();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Newlandscanner.listenForBarcodes.listen((event) async {
-        await services.resetForNewInspection().then(
-              (value) => onScanFn(event.barcodeData),
-            );
+      ModalRoute? route = ModalRoute.of(context);
+      if (route != null) {
+        int? i = route.settings.arguments as int?;
+        services.setStation = i;
+      }
+      Newlandscanner.listenForBarcodes.listen((event) async {        
+        await services.resetForNewInspection();
+        // ignore: use_build_context_synchronously
+        if (context.mounted) onScanFn(event.barcodeData, context);
       });
     });
     super.initState();
@@ -36,26 +40,15 @@ class _PageInspectPreDeliveryState extends State<PageInspectPreDelivery> {
   @override
   void dispose() {
     WakelockPlus.disable();
-    services.disposeServices();
+
     super.dispose();
   }
 
-  onScanFn(String barCode) async {
-    await services.resetForNewInspection().then(
-      (value) async {
-        services.setVin = barCode;
-        var res = await services.getCheckList();
-        if (res == false && mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: WDLabel(
-                label: 'This VIN has already been inspected.',
-              ),
-            ),
-          );
-        }
-      },
-    );
+  onScanFn(String barCode, BuildContext context) async {
+    await services.resetForNewInspection();
+
+    services.setVin = barCode;
+    if (context.mounted) await services.getCheckList(context);
   }
 
   openSettingsFn() async {
@@ -80,98 +73,109 @@ class _PageInspectPreDeliveryState extends State<PageInspectPreDelivery> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.blueGrey.shade100,
-      appBar: AppBar(
-        title: WDLabel(label: 'Final Inspection'),
-        actions: [
-          InkWell(
-            onTap: () => openSettingsFn(),
-            child: Padding(
-              padding: const EdgeInsets.only(right: 16.0),
-              child: Icon(
-                Icons.settings,
-                size: 32,
-                color: Colors.white,
-              ),
-            ),
-          )
-        ],
-      ),
-      persistentFooterButtons: [
-        ListenableBuilder(
-          listenable: services,
-          builder: (context, child) =>
-              services.isComplete == true || services.sku.isEmpty
-                  ? Align(
-                      alignment: Alignment.bottomLeft,
-                      child: WDScanQR(
-                        returnValue: (scannedVal) => onScanFn(scannedVal ?? ''),
-                      ),
-                    )
-                  : const SizedBox(),
-        ),
-        ListenableBuilder(
-          listenable: services,
-          builder: (context, child) =>
-              services.isComplete == true || services.sku.isEmpty
-                  ? const SizedBox(
-                      height: 0,
-                      width: 0,
-                    )
-                  : WDButtonWithLoad(
-                      label: 'Start Inspection',
-                      callback: () => services.initInspection(),
-                      isDisabled: services.toCheck != null ? true : false,
-                    ),
-        ),
-      ],
-      body: ListenableBuilder(
-        listenable: services,
-        builder: (context, child) => services.sku.isEmpty
-            ? Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Image.asset('assets/images/scan.png'),
-                  WDLabel(
-                    label: 'Scan Machine',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              )
-            : Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    WDLabel(
-                      label:
-                          'Inspection of ${services.sku} for machine : ${services.vehicleModel} [${services.vin}]',
-                    ),
-                    const Divider(),
-                    if (services.isComplete == true) ...[
-                      WDLabel(
-                        label:
-                            'You have completed the inspection of the machine. Scan a barcode to commence inspection of next machine',
-                      ),
-                      const Divider(),
-                    ],
-                    Expanded(
-                      child: ListView(
-                        children: services.checkList
-                            .map(
-                              (e) => WDDisplayCheckListCard(
-                                model: e,
-                                service: services,
-                              ),
-                            )
-                            .toList(),
-                      ),
-                    ),
-                  ],
+    return PopScope(
+      onPopInvokedWithResult: (didPop, result) => services.disposeServices(),
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          title: WDLabel(label: 'Final Inspection'),
+          actions: [
+            InkWell(
+              onTap: () => openSettingsFn(),
+              child: Padding(
+                padding: const EdgeInsets.only(right: 16.0),
+                child: Icon(
+                  Icons.settings,
+                  size: 32,
+                  color: Colors.white,
                 ),
               ),
+            )
+          ],
+        ),
+        persistentFooterButtons: [
+          ListenableBuilder(
+            listenable: services,
+            builder: (context, child) =>
+                services.isComplete == true || services.sku.isEmpty
+                    ? Align(
+                        alignment: Alignment.bottomLeft,
+                        child: WDScanQR(
+                          returnValue: (scannedVal) => onScanFn(
+                            scannedVal ?? '',
+                            context,
+                          ),
+                        ),
+                      )
+                    : const SizedBox(),
+          ),
+          ListenableBuilder(
+            listenable: services,
+            builder: (context, child) =>
+                services.isComplete == true || services.sku.isEmpty
+                    ? const SizedBox(
+                        height: 0,
+                        width: 0,
+                      )
+                    : WDButtonWithLoad(
+                        label: 'Start Inspection',
+                        callback: () => services.initInspection(),
+                        isDisabled: services.toCheck != null ? true : false,
+                      ),
+          ),
+        ],
+        body: ListenableBuilder(
+          listenable: services,
+          builder: (context, child) => services.isLoading
+              ? Center(
+                  child: CircularProgressIndicator.adaptive(),
+                )
+              : services.sku.isEmpty
+                  ? Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Image.asset('assets/images/scan.png'),
+                        WDLabel(
+                          label: 'Scan Machine',
+                          style: TextStyle(
+                              fontSize: 24, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    )
+                  : Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          WDLabel(
+                            label:
+                                'Inspection of ${services.sku} for machine : ${services.vehicleModel} [${services.vin}]',
+                          ),
+                          const Divider(),
+                          if (services.isComplete == true) ...[
+                            WDLabel(
+                              label:
+                                  'You have completed the inspection of the machine. Scan a barcode to commence inspection of next machine',
+                            ),
+                            const Divider(),
+                          ],
+                          Expanded(
+                            child: ListView(
+                              children: services.checkList
+                                  .map(
+                                    (e) => WDDisplayCheckListCard(
+                                      model: e,
+                                      service: services,
+                                    ),
+                                  )
+                                  .toList(),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+        ),
       ),
     );
   }

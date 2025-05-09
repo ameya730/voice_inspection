@@ -1,4 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:multiple_image_camera/camera_file.dart';
+import 'package:multiple_image_camera/multiple_image_camera.dart';
+import 'package:voice_poc_other/features/image_capture/widgets/mutli_image_capture.dart';
+import 'package:voice_poc_other/features/image_capture/widgets/single_image_capture.dart';
 import 'package:voice_poc_other/pages/02_home/s_home.dart';
 import 'package:voice_poc_other/services/auth/auth_service.dart';
 import 'package:voice_poc_other/services/routes/c_routes.dart';
@@ -17,18 +23,18 @@ class PageHome extends StatefulWidget {
 
 class _PageHomeState extends State<PageHome> {
   final service = HomeServices();
+  List<MediaModel> images = [];
 
-  @override
-  void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) => setup());
-    super.initState();
-  }
-
-  setup() async {}
+  navigateToInspection(int? i) => Navigator.pushNamed(
+        context,
+        Routes.preDeliveryInspection.path,
+        arguments: i,
+      );
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         leading: InkWell(
           onTap: () async {
@@ -56,14 +62,30 @@ class _PageHomeState extends State<PageHome> {
           children: [
             WDLabel(label: 'Select type of inspection : '),
             const Divider(),
-            InspectionTypeCard(heading: 'Primary Inspection', onclick: () {}),
-            InspectionTypeCard(heading: 'Secondary Inspection', onclick: () {}),
             InspectionTypeCard(
+              index: 1,
+              heading: 'Station 1',
+              onclick: () => navigateToInspection(1),
+            ),
+            InspectionTypeCard(
+              index: 2,
+              heading: 'Station 2',
+              onclick: () => navigateToInspection(2),
+            ),
+            InspectionTypeCard(
+              index: 3,
+              heading: 'Station 3',
+              onclick: () => navigateToInspection(3),
+            ),
+            InspectionTypeCard(
+              index: 4,
               heading: 'Final Inspection',
-              onclick: () => Navigator.pushNamed(
-                context,
-                Routes.preDeliveryInspection.path,
-              ),
+              onclick: () => navigateToInspection(null),
+            ),
+            SingleImageCapture(
+              onCapture: (e) {
+                print(e);
+              },
             ),
           ],
         ),

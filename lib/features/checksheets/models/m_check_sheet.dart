@@ -8,6 +8,7 @@ class MCheckSheet {
   List<CheckSheetDetails>? details;
   String? status;
   String? recordedPath;
+  int? station;
 
   MCheckSheet({
     this.gROUPID,
@@ -17,6 +18,7 @@ class MCheckSheet {
     this.details,
     this.status,
     this.recordedPath,
+    this.station,
   });
 
   MCheckSheet.fromJson(Map<String, dynamic> json) {
@@ -24,7 +26,7 @@ class MCheckSheet {
     sKU = json['SKU'];
     gROUP = json['GROUP'];
     sEQUENCE = json['SEQUENCE'];
-
+    station = json['station'];
     if (json['CHECKSHEETDET'] != null) {
       details = <CheckSheetDetails>[];
       json['CHECKSHEETDET'].forEach((v) {
