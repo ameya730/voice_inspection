@@ -122,27 +122,12 @@ class DisplayHeader extends StatelessWidget {
             ] else if (model.recordedPath != null) ...[
               InkWell(
                 onTap: () async {
-                  await AudioPlayer().play(DeviceFileSource(model.recordedPath!));
+                  await AudioPlayer()
+                      .play(DeviceFileSource(model.recordedPath!));
                 },
                 child: Icon(Icons.play_circle_outline, size: 32),
               ),
             ]
-          ],
-        ),
-        Divider(),
-        Row(
-          children: [
-            SingleImageCapture(
-              onCapture: (e) {
-                print(e);
-              },
-            ),
-            WDRecord(
-              toggleRecording: (e) {
-                print(e);
-              },
-            ),
-            RecordVideo(),
           ],
         ),
       ],
@@ -213,15 +198,45 @@ class SubDetailsCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             WDLabel(label: e?.gROUPDET ?? '-'),
-            if (e?.recordedPath != null) ...[
-              InkWell(
-                onTap: () async {
-                  await AudioPlayer()
-                      .play(DeviceFileSource(e?.recordedPath ?? '-'));
-                },
-                child: Icon(Icons.play_circle_outline, size: 32),   
+            
+            if (e?.status == Keywords.failed.prompt) ...[Divider(),
+              Row(
+                children: [
+                  SingleImageCapture(
+                    onCapture: (e) {
+                      service.updateMediaPath(e.path);
+                    },
+                  ),
+                  WDRecord(
+                    mediaPath: e?.recordedPath,
+                    updateMediaPath: (path) async {
+                      service.updateMediaPath(path);
+                      await service.resumeSpeech();                      
+                    },
+                    onStartRecording: () async{
+                      await service.pauseSpeech();
+                    },
+                    onStopRecording: () async{
+                      
+                    }
+                  ),
+                  RecordVideo(),
+                  IconButton(
+                    onPressed: () => service.evaluateSubDetails(),
+                    icon: Icon(Icons.check_circle_sharp, size: 32),
+                  ),
+                ],
               ),
             ],
+            // if (e?.recordedPath != null) ...[
+            //   InkWell(
+            //     onTap: () async {
+            //       await AudioPlayer()
+            //           .play(DeviceFileSource(e?.recordedPath ?? '-'));
+            //     },
+            //     child: Icon(Icons.play_circle_outline, size: 32),
+            //   ),
+            // ],
           ],
         ),
       ),

@@ -20,6 +20,7 @@ class CheckSheetService with DataServices {
       await super.supa.from('VEHPDIRESULT').insert(data).select();
       return true;
     } catch (e) {
+      print(e);
       return false;
     }
   }

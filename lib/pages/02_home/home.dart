@@ -7,6 +7,7 @@ import 'package:voice_poc_other/features/checksheets/models/m_check_sheet.dart';
 import 'package:voice_poc_other/features/checksheets/widgets/w_display_card.dart';
 import 'package:voice_poc_other/features/image_capture/widgets/mutli_image_capture.dart';
 import 'package:voice_poc_other/features/image_capture/widgets/single_image_capture.dart';
+import 'package:voice_poc_other/features/record/widgets/w_record.dart';
 import 'package:voice_poc_other/pages/02_home/s_home.dart';
 import 'package:voice_poc_other/pages/03_pre_delivery/s_pre_delivery.dart';
 import 'package:voice_poc_other/services/auth/auth_service.dart';
@@ -89,6 +90,10 @@ class _PageHomeState extends State<PageHome> {
             DisplayHeader(
               model: MCheckSheet(gROUP: 'This is a test'),
               service: PreDeliveryServices(),
+            ),
+
+            WDRecord(
+              updateMediaPath: (path) {},
             ),
             
         

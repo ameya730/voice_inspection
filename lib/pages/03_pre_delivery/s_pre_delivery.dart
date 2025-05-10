@@ -112,6 +112,8 @@ class PreDeliveryServices extends CheckSheetService
     notifyListeners();
     // Finally start listening to the result
 
+    
+
     super.speechService?.onResult().forEach(
       (result) async {
         print(result);
@@ -122,15 +124,15 @@ class PreDeliveryServices extends CheckSheetService
           updateStatus(Keywords.failed.prompt);
         }
 
-        if (result.contains('rec off') && _isRecordingVoice) {
-          _isRecordingVoice = false;
-          await super.toggleRecording();
+        // if (result.contains('rec off') && _isRecordingVoice) {
+        //   _isRecordingVoice = false;
+        //   await super.toggleRecording();
 
-          _checkList[_currentIndex].details?[_checkDetailsIndex].recordedPath =
-              super.finalPath;
-          await moveToNextOrEnd();
-          notifyListeners();
-        }
+        //   _checkList[_currentIndex].details?[_checkDetailsIndex].recordedPath =
+        //       super.finalPath;
+        //   await moveToNextOrEnd();
+        //   notifyListeners();
+        // }
       },
     );
     await super.speechService?.start();
@@ -218,22 +220,22 @@ class PreDeliveryServices extends CheckSheetService
 
   Future recordReason() async {
     // Prompt the user to wait for the beep
-    await super.narrateText('Record reason for rejection');
-
+    await super.narrateText('Capture the issue');
+    notifyListeners();
     // The below logic is required because the text to speech "speak" method
     // does not properly wait for the future. Hence if we do not use the below handler
     // the [toggleRecording] function is executed earlier and also records the text
     // In addition, since this handler is a listener it listens to all scenarios where
     // flutterTts is used
-    super.flutterTts?.setCompletionHandler(() async {
-      if (_toCheckDetails?.status == Keywords.failed.prompt) {
-        _isRecordingVoice = true;
-        _checkList[_currentIndex].details?[_checkDetailsIndex].recordedPath =
-            super.finalPath;
-        notifyListeners();
-        await super.toggleRecording();
-      }
-    });
+    // super.flutterTts?.setCompletionHandler(() async {
+    //   if (_toCheckDetails?.status == Keywords.failed.prompt) {
+    //     _isRecordingVoice = true;
+    //     _checkList[_currentIndex].details?[_checkDetailsIndex].recordedPath =
+    //         super.finalPath;
+    //     notifyListeners();
+    //     await super.toggleRecording();
+    //   }
+    // });
   }
 
   // When a group has been rejected then the user needs to go through each sub detail
@@ -316,6 +318,11 @@ class PreDeliveryServices extends CheckSheetService
     setFinalPath = '';
 
     return;
+  }
+
+  updateMediaPath(String path) {
+    _checkList[_currentIndex].details?[_checkDetailsIndex].recordedPath = path;
+    notifyListeners();
   }
 
   disposeServices() async => await super.disposeSST();

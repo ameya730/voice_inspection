@@ -26,6 +26,14 @@ mixin SpeechToTextServices {
     }
   }
 
+  Future<void> pauseSpeech() async {
+    await _speechService?.setPause(paused: true);
+  }
+
+  Future<void> resumeSpeech() async {
+    await _speechService?.setPause(paused: false);
+  }
+
   Future disposeSST() async {
     try {
       await _speechService?.setPause(paused: true);

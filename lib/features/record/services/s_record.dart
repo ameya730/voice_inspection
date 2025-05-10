@@ -22,8 +22,16 @@ mixin RecordServices {
     // Start the recording
     else {
       final name = DateFormat('ddmmyyhhmmss').format(DateTime.now());
-      await _recorder.start(
-        const RecordConfig(encoder: AudioEncoder.wav),
+      _tempPath = (await getTemporaryDirectory()).path;      
+      await _recorder.start(        
+        const RecordConfig(
+          encoder: AudioEncoder.wav,
+          echoCancel: true,
+          noiseSuppress: true,
+          bitRate: 128000,
+          sampleRate: 44100,
+          numChannels: 2,
+        ),        
         path: '$_tempPath${'/'}$name',
       );
     }
