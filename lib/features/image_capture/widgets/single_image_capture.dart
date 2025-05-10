@@ -19,7 +19,7 @@ class _SingleImageCaptureState extends State<SingleImageCapture> {
 
   Future<void> _captureImage() async {
     final pickedFile = await ImagePicker().pickImage(
-      source: ImageSource.camera,
+      source: ImageSource.gallery,
     );
     if (pickedFile != null) {
       setState(() {

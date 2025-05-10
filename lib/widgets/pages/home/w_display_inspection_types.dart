@@ -49,8 +49,7 @@ class _InspectionTypeCardState extends State<InspectionTypeCard> {
               const SizedBox(width: 10),
               Expanded(
                 child: WDLabel(
-                  label: widget.heading,
-                  isExpanded: true,
+                  label: widget.heading,                  
                   textAlign: TextAlign.left,
                 ),
               ),

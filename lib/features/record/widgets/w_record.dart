@@ -27,7 +27,7 @@ class _WDRecordState extends State<WDRecord> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           InkWell(
-            onTap: () async => await widget.toggleRecording(isPlaying),
+            onTap: toggleRecordingFn,
             child: Icon(
               isPlaying ? Icons.mic_off : Icons.mic,
               size: 42,

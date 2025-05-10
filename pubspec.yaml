@@ -53,6 +53,7 @@ dependencies:
   flutter_svg: ^2.0.9
   multiple_image_camera: ^0.0.2
   image_picker: ^1.1.2
+  camera: ^0.10.6
 
 dev_dependencies:
   flutter_test:

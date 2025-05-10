@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:voice_poc_other/features/checksheets/constants/c_key_prompts.dart';
 import 'package:voice_poc_other/features/checksheets/models/m_check_sheet.dart';
 import 'package:voice_poc_other/features/checksheets/models/m_check_sheet_details.dart';
+import 'package:voice_poc_other/features/image_capture/widgets/single_image_capture.dart';
+import 'package:voice_poc_other/features/record/widgets/w_record.dart';
+import 'package:voice_poc_other/features/record/widgets/w_record_video.dart';
 import 'package:voice_poc_other/pages/03_pre_delivery/s_pre_delivery.dart';
 import 'package:voice_poc_other/services/themes/constants/colors.dart';
 import 'package:voice_poc_other/widgets/labels/w_label.dart';
@@ -97,30 +100,51 @@ class DisplayHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        WDLabel(
-          label: model.gROUP ?? '-',
-          isFlexible: true,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: model.status != null ? Colors.grey : Colors.black,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            WDLabel(
+              label: model.gROUP ?? '-',
+              isFlexible: true,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: model.status != null ? Colors.grey : Colors.black,
+                  ),
+            ),
+            if (service.isRecordingVoice && service.toCheck == model) ...[
+              Image.asset(
+                'assets/gifs/sound_wave.gif',
+                height: 32,
+                fit: BoxFit.fitHeight,
               ),
+            ] else if (model.recordedPath != null) ...[
+              InkWell(
+                onTap: () async {
+                  await AudioPlayer().play(DeviceFileSource(model.recordedPath!));
+                },
+                child: Icon(Icons.play_circle_outline, size: 32),
+              ),
+            ]
+          ],
         ),
-        if (service.isRecordingVoice && service.toCheck == model) ...[
-          Image.asset(
-            'assets/gifs/sound_wave.gif',
-            height: 32,
-            fit: BoxFit.fitHeight,
-          ),
-        ] else if (model.recordedPath != null) ...[
-          InkWell(
-            onTap: () async {
-              await AudioPlayer().play(DeviceFileSource(model.recordedPath!));
-            },
-            child: Icon(Icons.play_circle_outline, size: 32),
-          ),
-        ]
+        Divider(),
+        Row(
+          children: [
+            SingleImageCapture(
+              onCapture: (e) {
+                print(e);
+              },
+            ),
+            WDRecord(
+              toggleRecording: (e) {
+                print(e);
+              },
+            ),
+            RecordVideo(),
+          ],
+        ),
       ],
     );
   }

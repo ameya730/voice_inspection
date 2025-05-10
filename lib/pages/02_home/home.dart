@@ -3,9 +3,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:multiple_image_camera/camera_file.dart';
 import 'package:multiple_image_camera/multiple_image_camera.dart';
+import 'package:voice_poc_other/features/checksheets/models/m_check_sheet.dart';
+import 'package:voice_poc_other/features/checksheets/widgets/w_display_card.dart';
 import 'package:voice_poc_other/features/image_capture/widgets/mutli_image_capture.dart';
 import 'package:voice_poc_other/features/image_capture/widgets/single_image_capture.dart';
 import 'package:voice_poc_other/pages/02_home/s_home.dart';
+import 'package:voice_poc_other/pages/03_pre_delivery/s_pre_delivery.dart';
 import 'package:voice_poc_other/services/auth/auth_service.dart';
 import 'package:voice_poc_other/services/routes/c_routes.dart';
 import 'package:voice_poc_other/widgets/labels/w_label.dart';
@@ -82,11 +85,13 @@ class _PageHomeState extends State<PageHome> {
               heading: 'Final Inspection',
               onclick: () => navigateToInspection(null),
             ),
-            SingleImageCapture(
-              onCapture: (e) {
-                print(e);
-              },
+            
+            DisplayHeader(
+              model: MCheckSheet(gROUP: 'This is a test'),
+              service: PreDeliveryServices(),
             ),
+            
+        
           ],
         ),
       ),
